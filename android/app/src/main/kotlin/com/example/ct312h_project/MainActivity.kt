@@ -1,4 +1,4 @@
-package com.example.ntr
+package com.example.ct312h_project
 
 import io.flutter.embedding.android.FlutterActivity
 
