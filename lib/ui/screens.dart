@@ -5,3 +5,5 @@ export 'foods/foods_manager.dart';
 export 'recipes/recipes_overview_screen.dart';
 
 export 'settings/settings_overview_screen.dart';
+
+export 'auth/login_screen.dart';

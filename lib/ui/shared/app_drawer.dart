@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import '../recipes/recipes_overview_screen.dart';
-import '../settings/settings_overview_screen.dart';
+import '../screens.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
@@ -18,7 +17,8 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.food_bank),
             title: const Text('Food Cards'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed('/');
+              Navigator.of(context)
+                  .pushReplacementNamed(FoodsOverviewScreen.routeName);
             },
           ),
           const Divider(),
@@ -37,6 +37,14 @@ class AppDrawer extends StatelessWidget {
             onTap: () {
               Navigator.of(context)
                   .pushReplacementNamed(SettingsScreen.routeName);
+            },
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.logout),
+            title: const Text('Logout'),
+            onTap: () {
+              Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
             },
           ),
         ],

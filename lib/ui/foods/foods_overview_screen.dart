@@ -7,6 +7,7 @@ import '../shared/app_drawer.dart';
 enum FilterOptions { favorites, all }
 
 class FoodsOverviewScreen extends StatefulWidget {
+  static const routeName = '/food_overview';
   const FoodsOverviewScreen({super.key});
   @override
   State<FoodsOverviewScreen> createState() => FoodsOverviewScreenState();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'ui/screens.dart';
+import 'ui/shared/navigation_utils.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,30 +30,30 @@ class MyApp extends StatelessWidget {
       title: 'NTR',
       debugShowCheckedModeBanner: false,
       theme: themData,
-      home: const FoodsOverviewScreen(),
-      routes: {
-        RecipesScreen.routeName: (ctx) => const SafeArea(
-              child: RecipesScreen(),
-            ),
-        SettingsScreen.routeName: (ctx) => const SafeArea(
-              child: SettingsScreen(),
-            ),
-      },
+      initialRoute: LoginScreen.routeName, // Start at LoginScreen
       onGenerateRoute: (settings) {
-        if (settings.name == FoodDetailScreen.routeName) {
-          final productId = settings.arguments as String;
-          return MaterialPageRoute(
-            settings: settings,
-            builder: (ctx) {
-              return SafeArea(
-                child: FoodDetailScreen(
-                  FoodsManager().findById(productId)!,
-                ),
-              );
-            },
-          );
+        Widget page;
+        switch (settings.name) {
+          case LoginScreen.routeName:
+            page = const SafeArea(child: LoginScreen());
+            break;
+          case FoodDetailScreen.routeName:
+            final foodId = settings.arguments as String;
+            page = SafeArea(
+              child: FoodDetailScreen(FoodsManager().findById(foodId)!),
+            );
+            break;
+          case RecipesScreen.routeName:
+            page = const SafeArea(child: RecipesScreen());
+            break;
+          case SettingsScreen.routeName:
+            page = const SafeArea(child: SettingsScreen());
+            break;
+          default:
+            page = const SafeArea(child: FoodsOverviewScreen());
+            break;
         }
-        return null;
+        return createRoute(page);
       },
     );
   }

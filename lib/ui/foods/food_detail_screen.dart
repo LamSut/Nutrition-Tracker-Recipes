@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/food.dart';
+import 'foods_overview_screen.dart';
 
 class FoodDetailScreen extends StatelessWidget {
   static const routeName = '/food_detail';
@@ -12,6 +13,16 @@ class FoodDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(food.name),
+        actions: [
+          IconButton(
+            // Navigate to Home (FoodsOverviewScreen)
+            icon: const Icon(Icons.home),
+            onPressed: () {
+              Navigator.pushReplacementNamed(
+                  context, FoodsOverviewScreen.routeName);
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
