@@ -20,9 +20,14 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-fonts:
-  - family: Calibri
-    fonts:
-      - asset: assets/fonts/calibri-regular.ttf
-      - asset: assets/fonts/calibri-bold.ttf
-        weight: 800
+
+  assets:
+  - assets/foods/
+  - assets/fonts/
+
+  fonts:
+    - family: Calibri
+      fonts:
+        - asset: assets/fonts/calibri-regular.ttf
+        - asset: assets/fonts/calibri-bold.ttf
+          weight: 800

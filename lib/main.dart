@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'ui/foods/foods_manager.dart';
+import 'ui/foods/food_detail_screen.dart';
+import 'ui/foods/foods_overview_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -9,8 +12,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.deepOrange,
-      secondary: Colors.deepOrangeAccent,
+      seedColor: Colors.cyan,
+      secondary: Colors.deepOrange,
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );
@@ -28,13 +31,8 @@ class MyApp extends StatelessWidget {
       title: 'NTR',
       debugShowCheckedModeBanner: false,
       theme: themData,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Nutrition Tracker Recipes'),
-        ),
-        body: const Center(
-          child: Text('Welcome to Nutrition Tracker Recipes'),
-        ),
+      home: SafeArea(
+        child: FoodsOverviewScreen(),
       ),
     );
   }
