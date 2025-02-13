@@ -25,10 +25,9 @@ class FoodGridTile extends StatelessWidget {
         child: GestureDetector(
           onTap: () {
             //Go to food detail screen
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (ctx) => FoodDetailScreen(food),
-              ),
+            Navigator.of(context).pushNamed(
+              FoodDetailScreen.routeName,
+              arguments: food.id,
             );
           },
           child: Image.asset(

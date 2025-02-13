@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'ui/foods/foods_manager.dart';
-import 'ui/foods/food_detail_screen.dart';
-import 'ui/foods/foods_overview_screen.dart';
+import 'ui/screens.dart';
 
 void main() {
   runApp(const MyApp());
@@ -31,9 +29,31 @@ class MyApp extends StatelessWidget {
       title: 'NTR',
       debugShowCheckedModeBanner: false,
       theme: themData,
-      home: SafeArea(
-        child: FoodsOverviewScreen(),
-      ),
+      home: const FoodsOverviewScreen(),
+      routes: {
+        RecipesScreen.routeName: (ctx) => const SafeArea(
+              child: RecipesScreen(),
+            ),
+        SettingsScreen.routeName: (ctx) => const SafeArea(
+              child: SettingsScreen(),
+            ),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == FoodDetailScreen.routeName) {
+          final productId = settings.arguments as String;
+          return MaterialPageRoute(
+            settings: settings,
+            builder: (ctx) {
+              return SafeArea(
+                child: FoodDetailScreen(
+                  FoodsManager().findById(productId)!,
+                ),
+              );
+            },
+          );
+        }
+        return null;
+      },
     );
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../models/food.dart';
 
 class FoodDetailScreen extends StatelessWidget {
+  static const routeName = '/food_detail';
   const FoodDetailScreen(this.food, {super.key});
 
   final Food food;

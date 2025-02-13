@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'foods_grid.dart';
 import 'food_search_delegate.dart';
 import 'foods_manager.dart';
+import '../shared/app_drawer.dart';
 
 enum FilterOptions { favorites, all }
 
@@ -20,7 +21,7 @@ class FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Nutrition Tracker Recipes'),
+        title: const Text('NTR'),
         actions: <Widget>[
           FoodFilterMenu(
             currentFilter: _currentFilter,
@@ -41,6 +42,7 @@ class FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
           ),
         ],
       ),
+      drawer: const AppDrawer(),
       body: FoodsGrid(
         _currentFilter == FilterOptions.favorites,
       ),
