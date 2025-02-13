@@ -44,6 +44,28 @@ class FoodsManager {
       imageUrl: 'assets/foods/broccoli.jpg',
       isFavorite: true,
     ),
+    Food(
+      id: 'f5',
+      name: 'Salmon',
+      calories: 208,
+      protein: 20,
+      fat: 13,
+      carbohydrates: 0,
+      fiber: 0,
+      imageUrl: 'assets/foods/salmon.jpg',
+      isFavorite: false,
+    ),
+    Food(
+      id: 'f6',
+      name: 'Beef',
+      calories: 250,
+      protein: 26,
+      fat: 17,
+      carbohydrates: 0,
+      fiber: 0,
+      imageUrl: 'assets/foods/beef.jpg',
+      isFavorite: false,
+    ),
   ];
 
   int get itemCount {
