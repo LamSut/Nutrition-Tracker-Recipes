@@ -46,8 +46,8 @@ class MyApp extends StatelessWidget {
           case RecipesScreen.routeName:
             page = const SafeArea(child: RecipesScreen());
             break;
-          case SettingsScreen.routeName:
-            page = const SafeArea(child: SettingsScreen());
+          case UserScreen.routeName:
+            page = const SafeArea(child: UserScreen());
             break;
           default:
             page = const SafeArea(child: FoodsOverviewScreen());
