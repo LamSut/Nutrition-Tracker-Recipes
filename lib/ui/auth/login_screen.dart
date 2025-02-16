@@ -31,7 +31,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: colorScheme.primary,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16.0),
@@ -41,22 +41,28 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: <Widget>[
                 Text(
-                  'Welcome to NTR',
-                  style: TextStyle(
+                  'Nutrition Tracker Recipes',
+                  style: const TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.bold,
-                    color: colorScheme.primary,
+                    color: Colors.white,
                   ),
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 28),
                 TextFormField(
                   controller: _usernameController,
                   decoration: InputDecoration(
                     labelText: 'Username',
+                    labelStyle: const TextStyle(fontSize: 18),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    filled: true,
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
                     ),
                   ),
+                  style: const TextStyle(fontSize: 18),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your username';
@@ -69,10 +75,16 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
+                    labelStyle: const TextStyle(fontSize: 18),
+                    floatingLabelBehavior: FloatingLabelBehavior.never,
+                    filled: true,
+                    fillColor: Colors.white,
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8.0),
+                      borderSide: BorderSide.none,
                     ),
                   ),
+                  style: const TextStyle(fontSize: 18),
                   obscureText: true,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -85,19 +97,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 50,
-                      vertical: 15,
+                      horizontal: 40,
+                      vertical: 10,
                     ),
-                    backgroundColor: colorScheme.primary,
-                    foregroundColor: colorScheme.onPrimary,
+                    backgroundColor: colorScheme.secondary,
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
                   onPressed: _login,
                   child: const Text(
                     'Login',
-                    style: TextStyle(fontSize: 20),
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],

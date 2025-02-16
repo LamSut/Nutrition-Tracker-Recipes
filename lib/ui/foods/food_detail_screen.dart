@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../models/food.dart';
-import '../recipes/recipes_overview_screen.dart';
 import 'foods_overview_screen.dart';
+import '../recipes/recipes_overview_screen.dart';
 
 class FoodDetailScreen extends StatelessWidget {
   static const routeName = '/food_detail';
@@ -10,7 +10,6 @@ class FoodDetailScreen extends StatelessWidget {
   final Food food;
 
   void _addToRecipe(BuildContext context) {
-    // Add the food item to the recipe list
     RecipesScreen.addRecipe(food);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${food.name} added to your recipes!')),
@@ -19,12 +18,13 @@ class FoodDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(food.name),
         actions: [
           IconButton(
-            // Navigate to Home (FoodsOverviewScreen)
             icon: const Icon(Icons.home),
             onPressed: () {
               Navigator.pushReplacementNamed(
@@ -36,44 +36,71 @@ class FoodDetailScreen extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            SizedBox(
-              height: 300,
-              width: double.infinity,
-              child:
-                  Image.asset(food.imageUrl, fit: BoxFit.cover), // Using assets
+            Container(
+              margin: const EdgeInsets.only(
+                  top: 20, left: 20, right: 20, bottom: 4),
+              padding: const EdgeInsets.all(2),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey, width: 2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.asset(food.imageUrl, fit: BoxFit.cover),
+              ),
             ),
-            const SizedBox(height: 18),
+            const SizedBox(height: 4),
             Text(
-              '${food.calories} kcal',
-              style: const TextStyle(color: Colors.grey, fontSize: 25),
+              'Nutrients of ${food.name}',
+              style: TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 4),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    'Protein: ${food.protein}g',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                  Container(
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                    child: Table(
+                      border: TableBorder.all(color: Colors.grey),
+                      columnWidths: const {
+                        0: FlexColumnWidth(1),
+                        1: FlexColumnWidth(1),
+                      },
+                      children: [
+                        _buildTableRow('Portion', '100g', isHeader: true),
+                        _buildTableRow('Calories', '${food.calories} kcal'),
+                        _buildTableRow('Protein', '${food.protein}g'),
+                        _buildTableRow('Fat', '${food.fat}g'),
+                        _buildTableRow(
+                            'Carbohydrates', '${food.carbohydrates}g'),
+                        _buildTableRow('Fiber', '${food.fiber}g'),
+                      ],
+                    ),
                   ),
-                  Text(
-                    'Fat: ${food.fat}g',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  Text(
-                    'Carbohydrates: ${food.carbohydrates}g',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  Text(
-                    'Fiber: ${food.fiber}g',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 16),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: theme.colorScheme.secondary,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.only(
+                          top: 8, right: 12, bottom: 8, left: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                    ),
                     onPressed: () => _addToRecipe(context),
-                    child: const Text('Add to recipe'),
+                    child: const Text(
+                      'Add to Recipe',
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -81,6 +108,33 @@ class FoodDetailScreen extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+
+  TableRow _buildTableRow(String name, String value, {bool isHeader = false}) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            name,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            value,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: isHeader ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

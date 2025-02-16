@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
       seedColor: Colors.cyan,
-      secondary: Colors.deepOrange,
+      secondary: Colors.deepOrangeAccent,
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );
