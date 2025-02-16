@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/food.dart';
+import '../recipes/recipes_overview_screen.dart';
 import 'foods_overview_screen.dart';
 
 class FoodDetailScreen extends StatelessWidget {
@@ -7,6 +8,14 @@ class FoodDetailScreen extends StatelessWidget {
   const FoodDetailScreen(this.food, {super.key});
 
   final Food food;
+
+  void _addToRecipe(BuildContext context) {
+    // Add the food item to the recipe list
+    RecipesScreen.addRecipe(food);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('${food.name} added to your recipes!')),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +45,7 @@ class FoodDetailScreen extends StatelessWidget {
             const SizedBox(height: 18),
             Text(
               '${food.calories} kcal',
-              style: const TextStyle(color: Colors.grey, fontSize: 20),
+              style: const TextStyle(color: Colors.grey, fontSize: 25),
             ),
             const SizedBox(height: 10),
             Container(
@@ -60,6 +69,11 @@ class FoodDetailScreen extends StatelessWidget {
                   Text(
                     'Fiber: ${food.fiber}g',
                     style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () => _addToRecipe(context),
+                    child: const Text('Add to recipe'),
                   ),
                 ],
               ),
