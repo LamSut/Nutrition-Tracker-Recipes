@@ -22,7 +22,8 @@ class UserScreen extends StatelessWidget {
           ? const Center(child: Text('No user logged in'))
           : SingleChildScrollView(
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                 child: Column(
                   children: [
                     const SizedBox(height: 20),
@@ -39,10 +40,11 @@ class UserScreen extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    _buildInfoField('Name', user.name),
                     _buildInfoField('Username', user.username),
+                    _buildInfoField('Full Name', user.name),
                     _buildInfoField('Gender', user.gender ? 'Male' : 'Female'),
-                    _buildInfoField('Date of Birth', '${user.birthday.toLocal().day}/${user.birthday.toLocal().month}/${user.birthday.toLocal().year}'),
+                    _buildInfoField('Date of Birth',
+                        '${user.birthday.toLocal().day}/${user.birthday.toLocal().month}/${user.birthday.toLocal().year}'),
                     _buildInfoField('Email Address', user.email),
                     _buildSettingsSection(context),
                   ],
@@ -60,7 +62,8 @@ class UserScreen extends StatelessWidget {
         children: [
           Text(
             label,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: const TextStyle(
+                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
           const SizedBox(height: 5),
           Container(
@@ -88,7 +91,8 @@ class UserScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 10),
           child: Text(
             'Settings',
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
+            style: TextStyle(
+                fontSize: 18, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
         ),
         _buildSettingsButton(
@@ -115,7 +119,10 @@ class UserScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildSettingsButton({required IconData icon, required String title, required VoidCallback onPressed}) {
+  Widget _buildSettingsButton(
+      {required IconData icon,
+      required String title,
+      required VoidCallback onPressed}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
@@ -129,7 +136,8 @@ class UserScreen extends StatelessWidget {
           title,
           style: const TextStyle(color: Colors.black, fontSize: 16),
         ),
-        trailing: const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16),
+        trailing:
+            const Icon(Icons.arrow_forward_ios, color: Colors.black, size: 16),
         onTap: onPressed,
       ),
     );

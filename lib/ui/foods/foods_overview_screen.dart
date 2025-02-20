@@ -1,38 +1,25 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../shared/app_drawer.dart';
-
 import 'foods_grid.dart';
 import 'food_search_delegate.dart';
 import 'foods_manager.dart';
 
-enum FilterOptions { favorites, all }
-
-class FoodsOverviewScreen extends StatefulWidget {
+class FoodsOverviewScreen extends StatelessWidget {
   static const routeName = '/food_overview';
-  const FoodsOverviewScreen({super.key});
-  @override
-  State<FoodsOverviewScreen> createState() => FoodsOverviewScreenState();
-}
 
-class FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
-  var _currentFilter = FilterOptions.all;
+  const FoodsOverviewScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final foodsManager = FoodsManager();
-    final allFoods = foodsManager.items;
+    final foodsManager = Provider.of<FoodsManager>(context, listen: false);
+    final allFoods = foodsManager.items; // remove filters before search
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Food Cards'),
         actions: <Widget>[
-          FoodFilterMenu(
-            currentFilter: _currentFilter,
-            onFilterSelected: (filter) {
-              setState(() {
-                _currentFilter = filter;
-              });
-            },
-          ),
+          const FoodTypeFilterMenu(),
           IconButton(
             icon: const Icon(Icons.search),
             onPressed: () {
@@ -45,36 +32,31 @@ class FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
         ],
       ),
       drawer: const AppDrawer(),
-      body: FoodsGrid(
-        _currentFilter == FilterOptions.favorites,
-      ),
+      body: const FoodsGrid(),
     );
   }
 }
 
-class FoodFilterMenu extends StatelessWidget {
-  const FoodFilterMenu({
-    super.key,
-    this.currentFilter,
-    this.onFilterSelected,
-  });
-  final FilterOptions? currentFilter;
-  final void Function(FilterOptions selectedValue)? onFilterSelected;
+class FoodTypeFilterMenu extends StatelessWidget {
+  const FoodTypeFilterMenu({super.key});
+
   @override
   Widget build(BuildContext context) {
-    return PopupMenuButton(
-      initialValue: currentFilter,
-      onSelected: onFilterSelected,
+    final foodsManager = Provider.of<FoodsManager>(context);
+    final currentType = foodsManager.selectedType;
+
+    return PopupMenuButton<String>(
+      initialValue: currentType,
+      onSelected: (type) {
+        foodsManager.setFoodType(type);
+      },
       icon: const Icon(Icons.more_vert),
       itemBuilder: (ctx) => [
-        const PopupMenuItem(
-          value: FilterOptions.favorites,
-          child: Text('Only Favorites'),
-        ),
-        const PopupMenuItem(
-          value: FilterOptions.all,
-          child: Text('Show All'),
-        ),
+        const PopupMenuItem(value: 'All', child: Text('Show All')),
+        const PopupMenuItem(value: 'Fruit', child: Text('Fruits')),
+        const PopupMenuItem(value: 'Vegetable', child: Text('Vegetables')),
+        const PopupMenuItem(value: 'Meat', child: Text('Meat')),
+        const PopupMenuItem(value: 'Fish', child: Text('Fish')),
       ],
     );
   }

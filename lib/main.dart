@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
-import 'ui/user/users_manager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,6 +9,7 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
     );
-    final themData = ThemeData(
+    final themeData = ThemeData(
       fontFamily: 'Calibri',
       colorScheme: colorScheme,
       appBarTheme: AppBarTheme(
@@ -28,13 +28,17 @@ class MyApp extends StatelessWidget {
         shadowColor: colorScheme.shadow,
       ),
     );
-    return ChangeNotifierProvider(
-      create: (context) => UsersManager(),
+
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (ctx) => UsersManager()),
+        ChangeNotifierProvider(create: (ctx) => FoodsManager()),
+      ],
       child: MaterialApp(
         title: 'NTR',
         debugShowCheckedModeBanner: false,
-        theme: themData,
-        initialRoute: LoginScreen.routeName, // Start at LoginScreen
+        theme: themeData,
+        initialRoute: LoginScreen.routeName,
         onGenerateRoute: (settings) {
           Widget page;
           switch (settings.name) {
@@ -42,11 +46,14 @@ class MyApp extends StatelessWidget {
               page = const SafeArea(child: LoginScreen());
               break;
             case FoodDetailScreen.routeName:
-              final foodId = settings.arguments as String;
-              page = SafeArea(
-                child: FoodDetailScreen(FoodsManager().findById(foodId)!),
+              final productId = settings.arguments as String;
+              return MaterialPageRoute(
+                builder: (ctx) => SafeArea(
+                  child: FoodDetailScreen(
+                    ctx.read<FoodsManager>().findById(productId)!,
+                  ),
+                ),
               );
-              break;
             case RecipesScreen.routeName:
               page = const SafeArea(child: RecipesScreen());
               break;

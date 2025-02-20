@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../screens.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -43,6 +45,8 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
+              Provider.of<FoodsManager>(context, listen: false)
+                  .setFoodType('All');
               Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
             },
           ),

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'food_grid_tile.dart';
 import 'foods_manager.dart';
 
 class FoodsGrid extends StatelessWidget {
-  final bool showFavorites;
-  const FoodsGrid(this.showFavorites, {super.key});
+  const FoodsGrid({super.key});
+
   @override
   Widget build(BuildContext context) {
-    final foodsManager = FoodsManager();
-    final foods =
-        showFavorites ? foodsManager.favoriteItems : foodsManager.items;
+    final foods = context.watch<FoodsManager>().items;
+
     return GridView.builder(
       padding: const EdgeInsets.all(10.0),
       itemCount: foods.length,

@@ -7,5 +7,6 @@ export 'recipes/recipes_overview_screen.dart';
 export 'user/user_profile_screen.dart';
 export 'user/user_update_information_screen.dart';
 export 'user/user_update_password_screen.dart';
+export 'user/users_manager.dart';
 
 export 'auth/login_screen.dart';
