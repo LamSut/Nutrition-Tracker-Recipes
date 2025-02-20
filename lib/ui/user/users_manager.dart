@@ -1,6 +1,7 @@
+import 'package:flutter/material.dart';
 import '../../models/user.dart';
 
-class UsersManager {
+class UsersManager extends ChangeNotifier {
   final List<User> _items = [
     User(
       id: 'u1',
@@ -18,11 +19,13 @@ class UsersManager {
       password: 'monkey',
       name: 'Chu Khi Dan',
       email: 'nguyenminhtien@example.com',
-      profileImageUrl: 'assets/avatars/monkey.png',
+      profileImageUrl: 'assets/avatars/monkey.jpg',
       birthday: DateTime(2003, 2, 11),
       gender: true,
     ),
   ];
+
+  User? _loggedInUser;
 
   int get itemCount {
     return _items.length;
@@ -30,6 +33,10 @@ class UsersManager {
 
   List<User> get items {
     return [..._items];
+  }
+
+  User? get loggedInUser {
+    return _loggedInUser;
   }
 
   User? findByUsername(String username) {
@@ -42,6 +49,33 @@ class UsersManager {
 
   bool authenticate(String username, String password) {
     final user = findByUsername(username);
-    return user != null && user.password == password;
+    if (user != null && user.password == password) {
+      _loggedInUser = user;
+      notifyListeners();
+      return true;
+    }
+    return false;
+  }
+
+  void updateUser(User updatedUser) {
+    final index = _items.indexWhere((user) => user.id == updatedUser.id);
+    if (index != -1) {
+      _items[index] = updatedUser;
+      if (_loggedInUser?.id == updatedUser.id) {
+        _loggedInUser = updatedUser;
+      }
+      notifyListeners();
+    }
+  }
+
+  void updatePassword(String newPassword) {
+    if (_loggedInUser != null) {
+      _loggedInUser = _loggedInUser!.copyWith(password: newPassword);
+      final index = _items.indexWhere((user) => user.id == _loggedInUser!.id);
+      if (index != -1) {
+        _items[index] = _loggedInUser!;
+        notifyListeners();
+      }
+    }
   }
 }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
+import 'ui/user/users_manager.dart';
 
 void main() {
   runApp(const MyApp());
@@ -26,35 +28,44 @@ class MyApp extends StatelessWidget {
         shadowColor: colorScheme.shadow,
       ),
     );
-    return MaterialApp(
-      title: 'NTR',
-      debugShowCheckedModeBanner: false,
-      theme: themData,
-      initialRoute: LoginScreen.routeName, // Start at LoginScreen
-      onGenerateRoute: (settings) {
-        Widget page;
-        switch (settings.name) {
-          case LoginScreen.routeName:
-            page = const SafeArea(child: LoginScreen());
-            break;
-          case FoodDetailScreen.routeName:
-            final foodId = settings.arguments as String;
-            page = SafeArea(
-              child: FoodDetailScreen(FoodsManager().findById(foodId)!),
-            );
-            break;
-          case RecipesScreen.routeName:
-            page = const SafeArea(child: RecipesScreen());
-            break;
-          case UserScreen.routeName:
-            page = const SafeArea(child: UserScreen());
-            break;
-          default:
-            page = const SafeArea(child: FoodsOverviewScreen());
-            break;
-        }
-        return createRoute(page);
-      },
+    return ChangeNotifierProvider(
+      create: (context) => UsersManager(),
+      child: MaterialApp(
+        title: 'NTR',
+        debugShowCheckedModeBanner: false,
+        theme: themData,
+        initialRoute: LoginScreen.routeName, // Start at LoginScreen
+        onGenerateRoute: (settings) {
+          Widget page;
+          switch (settings.name) {
+            case LoginScreen.routeName:
+              page = const SafeArea(child: LoginScreen());
+              break;
+            case FoodDetailScreen.routeName:
+              final foodId = settings.arguments as String;
+              page = SafeArea(
+                child: FoodDetailScreen(FoodsManager().findById(foodId)!),
+              );
+              break;
+            case RecipesScreen.routeName:
+              page = const SafeArea(child: RecipesScreen());
+              break;
+            case UserScreen.routeName:
+              page = const SafeArea(child: UserScreen());
+              break;
+            case UserUpdateInformationScreen.routeName:
+              page = const SafeArea(child: UserUpdateInformationScreen());
+              break;
+            case UserUpdatePasswordScreen.routeName:
+              page = const SafeArea(child: UserUpdatePasswordScreen());
+              break;
+            default:
+              page = const SafeArea(child: FoodsOverviewScreen());
+              break;
+          }
+          return createRoute(page);
+        },
+      ),
     );
   }
 }
