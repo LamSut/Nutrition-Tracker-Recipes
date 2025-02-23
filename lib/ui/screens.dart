@@ -3,6 +3,7 @@ export 'foods/food_detail_screen.dart';
 export 'foods/foods_manager.dart';
 
 export 'recipes/recipes_overview_screen.dart';
+export 'recipes/recipe_detail_screen.dart';
 export 'recipes/recipes_manager.dart';
 
 export 'user/user_profile_screen.dart';

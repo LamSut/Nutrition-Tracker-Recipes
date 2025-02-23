@@ -7,6 +7,7 @@ class User {
   final String profileImageUrl;
   final DateTime birthday;
   final bool gender;
+  final bool role;
 
   User({
     this.id,
@@ -17,6 +18,7 @@ class User {
     required this.profileImageUrl,
     required this.birthday,
     required this.gender,
+    required this.role,
   });
 
   User copyWith({
@@ -28,6 +30,7 @@ class User {
     String? profileImageUrl,
     DateTime? birthday,
     bool? gender,
+    bool? role,
   }) {
     return User(
       id: id ?? this.id,
@@ -38,6 +41,7 @@ class User {
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       birthday: birthday ?? this.birthday,
       gender: gender ?? this.gender,
+      role: role ?? this.role,
     );
   }
 }

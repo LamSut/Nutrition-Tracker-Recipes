@@ -62,6 +62,16 @@ class MyApp extends StatelessWidget {
               ),
             );
             break;
+          case RecipeDetailScreen.routeName:
+            final recipeId = settings.arguments as String;
+            page = SafeArea(
+              child: Consumer<RecipesManager>(
+                builder: (context, recipesManager, _) => RecipeDetailScreen(
+                  recipesManager.findById(recipeId),
+                ),
+              ),
+            );
+            break;
           case RecipesScreen.routeName:
             page = const SafeArea(child: RecipesScreen());
             break;

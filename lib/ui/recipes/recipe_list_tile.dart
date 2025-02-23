@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/recipe.dart';
+import 'recipe_detail_screen.dart';
 
 class RecipeListTile extends StatelessWidget {
   final Recipe recipe;
@@ -35,6 +36,12 @@ class RecipeListTile extends StatelessWidget {
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
         ),
+        onTap: () {
+          Navigator.of(context).pushNamed(
+            RecipeDetailScreen.routeName,
+            arguments: recipe.id,
+          );
+        },
       ),
     );
   }

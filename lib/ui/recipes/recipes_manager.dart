@@ -34,6 +34,20 @@ class RecipesManager with ChangeNotifier {
 
   List<Recipe> get items => [..._items];
 
+  Recipe findById(String id) {
+    return _items.firstWhere(
+      (recipe) => recipe.id == id,
+      orElse: () => Recipe(
+        id: 'unknown',
+        name: 'Unknown Recipe',
+        description: 'No recipe found.',
+        ingredients: [],
+        imageUrl: '',
+        userID: '',
+      ),
+    );
+  }
+
   void addRecipe(Recipe recipe) {
     _items.add(recipe);
     notifyListeners();
@@ -50,5 +64,29 @@ class RecipesManager with ChangeNotifier {
       _items[index] = updatedRecipe;
       notifyListeners();
     }
+  }
+
+  Map<String, double> calculateTotalNutrition(Recipe recipe) {
+    double totalCalories = 0;
+    double totalProtein = 0;
+    double totalFat = 0;
+    double totalCarbohydrates = 0;
+    double totalFiber = 0;
+
+    for (var ingredient in recipe.ingredients) {
+      totalCalories += ingredient.food.calories * ingredient.quantity;
+      totalProtein += ingredient.food.protein * ingredient.quantity;
+      totalFat += ingredient.food.fat * ingredient.quantity;
+      totalCarbohydrates += ingredient.food.carbohydrates * ingredient.quantity;
+      totalFiber += ingredient.food.fiber * ingredient.quantity;
+    }
+
+    return {
+      'calories': totalCalories,
+      'protein': totalProtein,
+      'fat': totalFat,
+      'carbohydrates': totalCarbohydrates,
+      'fiber': totalFiber,
+    };
   }
 }

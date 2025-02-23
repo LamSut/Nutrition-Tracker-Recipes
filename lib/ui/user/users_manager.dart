@@ -12,6 +12,7 @@ class UsersManager extends ChangeNotifier {
       profileImageUrl: 'assets/avatars/moomoo.png',
       birthday: DateTime(2003, 12, 24),
       gender: false,
+      role: true,
     ),
     User(
       id: 'u2',
@@ -22,22 +23,17 @@ class UsersManager extends ChangeNotifier {
       profileImageUrl: 'assets/avatars/monkey.jpg',
       birthday: DateTime(2003, 2, 11),
       gender: true,
+      role: false,
     ),
   ];
 
   User? _loggedInUser;
 
-  int get itemCount {
-    return _items.length;
-  }
+  int get itemCount => _items.length;
 
-  List<User> get items {
-    return [..._items];
-  }
+  List<User> get items => [..._items];
 
-  User? get loggedInUser {
-    return _loggedInUser;
-  }
+  User? get loggedInUser => _loggedInUser;
 
   User? findByUsername(String username) {
     try {
@@ -77,5 +73,9 @@ class UsersManager extends ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  bool isAdmin() {
+    return _loggedInUser?.role ?? false;
   }
 }
