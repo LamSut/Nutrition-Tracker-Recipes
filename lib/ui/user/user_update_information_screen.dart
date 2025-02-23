@@ -49,12 +49,23 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: const Text('Are you sure?'),
-          content: const Text('Do you want to update your information?'),
+          title: const Center(child: Text(
+            'Confirm Update',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          )),
+          content: const Text('Are you sure you want to update your information?',                 
+                  style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                ),),
+          actionsAlignment: MainAxisAlignment.center,
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text('No'),
+              child: const Text('Cancel', style: TextStyle(color: Colors.red, fontSize: 18)),
             ),
             TextButton(
               onPressed: () {
@@ -70,7 +81,7 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
                 Navigator.of(ctx).pop();
                 Navigator.of(context).pop();
               },
-              child: const Text('Yes'),
+              child: const Text('Update', style: TextStyle(color: Colors.teal, fontSize: 18)),
             ),
           ],
         ),
@@ -98,9 +109,9 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
                     backgroundImage: AssetImage(_user.profileImageUrl),
                   ),
                   Container(
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       shape: BoxShape.circle,
-                      color: Color.fromARGB(255, 0, 102, 116),
+                      color: Theme.of(context).colorScheme.primary,
                     ),
                     child: IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white),
@@ -110,12 +121,20 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
                 ],
               ),
               const SizedBox(height: 20),
+              const Text(
+                'Update Information',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
               Form(
                 key: _formKey,
                 child: Column(
                   children: [
                     _buildTextField('Name', _nameController),
-                    _buildTextField('Email Address', _emailController, readOnly: false, isVerified: true),
+                    _buildTextField('Email Address', _emailController, readOnly: true),
                     _buildDateField('Date of Birth', _birthdayController),
                     _buildDropdownField('Gender', _selectedGender, ['Male', 'Female']),
                   ],
@@ -129,7 +148,7 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   minimumSize: const Size(double.infinity, 50),
                 ),
-                child: const Text('Save Changes', 
+                child: const Text('Save Changes',
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -144,19 +163,28 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, {bool readOnly = false, bool isVerified = false}) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.grey[200],
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildTextField(String label, TextEditingController controller, {bool readOnly = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[600])),
+        const SizedBox(height: 5),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: TextFormField(
+            controller: controller,
+            style: TextStyle(fontSize: 16, color: Colors.black),
+            readOnly: readOnly,
+            decoration: InputDecoration.collapsed(hintText: ''),
+          ),
         ),
-        readOnly: readOnly,
-      ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 
@@ -170,19 +198,29 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
   }
 
   Widget _buildDropdownField(String label, String? value, List<String> items) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: DropdownButtonFormField<String>(
-        value: value,
-        decoration: InputDecoration(
-          labelText: label,
-          filled: true,
-          fillColor: Colors.grey[200],
-          border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: TextStyle(fontWeight: FontWeight.w600, color: Colors.grey[600])),
+        const SizedBox(height: 5),
+        Container(
+          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<String>(
+              value: value,
+              isExpanded: true,
+              onChanged: (val) => setState(() => _selectedGender = val),
+              items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
+            ),
+          ),
         ),
-        items: items.map((e) => DropdownMenuItem(value: e, child: Text(e))).toList(),
-        onChanged: (val) => setState(() => _selectedGender = val),
-      ),
+        const SizedBox(height: 10),
+      ],
     );
   }
 }

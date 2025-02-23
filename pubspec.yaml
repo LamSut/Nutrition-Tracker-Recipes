@@ -24,9 +24,10 @@ flutter:
   uses-material-design: true
 
   assets:
-  - assets/foods/
-  - assets/fonts/
-  - assets/avatars/
+    - assets/avatars/
+    - assets/fonts/
+    - assets/foods/
+    - assets/recipes/
 
   fonts:
     - family: Calibri

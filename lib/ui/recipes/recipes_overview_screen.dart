@@ -1,62 +1,39 @@
 import 'package:flutter/material.dart';
-import '../../models/food.dart';
+import 'package:provider/provider.dart';
+
+import '../recipes/recipes_manager.dart';
+import '../user/users_manager.dart';
 import '../shared/app_drawer.dart';
+import 'recipe_list_tile.dart';
 
-class RecipesScreen extends StatefulWidget {
-  static const routeName = '/recipes';
-  static final List<Food> _recipes = [];
-
-  static void addRecipe(Food food) {
-    _recipes.add(food);
-  }
+class RecipesScreen extends StatelessWidget {
+  static const routeName = '/recipes-overview';
 
   const RecipesScreen({super.key});
 
   @override
-  State<RecipesScreen> createState() => _RecipesScreenState();
-}
-
-class _RecipesScreenState extends State<RecipesScreen> {
-  void _removeRecipe(int index) {
-    setState(() {
-      RecipesScreen._recipes.removeAt(index);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
+    final recipesManager = Provider.of<RecipesManager>(context);
+    final usersManager = Provider.of<UsersManager>(context, listen: false);
+    final loggedInUser = usersManager.loggedInUser;
+
+    final userRecipes = recipesManager.items
+        .where((recipe) => recipe.userID == loggedInUser?.id)
+        .toList();
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Your Recipes'),
-      ),
+      appBar: AppBar(title: const Text('Your Recipes')),
       drawer: const AppDrawer(),
-      body: ListView.builder(
-        itemCount: RecipesScreen._recipes.length,
-        itemBuilder: (ctx, index) {
-          final food = RecipesScreen._recipes[index];
-          return Dismissible(
-            key: ValueKey(food.id),
-            direction: DismissDirection.endToStart,
-            onDismissed: (direction) {
-              _removeRecipe(index);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('${food.name} removed from your recipes!')),
-              );
-            },
-            background: Container(
-              color: Colors.red,
-              alignment: Alignment.centerRight,
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: const Icon(Icons.delete, color: Colors.white),
+      body: userRecipes.isEmpty
+          ? const Center(
+              child: Text('No recipes found', style: TextStyle(fontSize: 18)))
+          : ListView.builder(
+              padding: const EdgeInsets.all(8.0),
+              itemCount: userRecipes.length,
+              itemBuilder: (ctx, index) {
+                return RecipeListTile(recipe: userRecipes[index]);
+              },
             ),
-            child: ListTile(
-              leading: Image.asset(food.imageUrl, width: 50, height: 50),
-              title: Text(food.name),
-              subtitle: Text('${food.calories} kcal'),
-            ),
-          );
-        },
-      ),
     );
   }
 }

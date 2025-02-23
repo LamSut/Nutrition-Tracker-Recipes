@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../models/food.dart';
 import 'foods_overview_screen.dart';
-import '../recipes/recipes_overview_screen.dart';
 
 class FoodDetailScreen extends StatelessWidget {
   static const routeName = '/food_detail';
@@ -10,7 +9,6 @@ class FoodDetailScreen extends StatelessWidget {
   final Food food;
 
   void _addToRecipe(BuildContext context) {
-    RecipesScreen.addRecipe(food);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text('${food.name} added to your recipes!')),
     );

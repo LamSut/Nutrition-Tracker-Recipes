@@ -53,6 +53,9 @@ class FoodGridFooter extends StatelessWidget {
       title: Text(
         food.name,
         textAlign: TextAlign.left,
+        style: const TextStyle(
+          fontWeight: FontWeight.bold,
+        ),
       ),
       trailing: IconButton(
         icon: const Icon(Icons.playlist_add),
