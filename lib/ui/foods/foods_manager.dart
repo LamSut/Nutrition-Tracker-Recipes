@@ -94,6 +94,8 @@ class FoodsManager with ChangeNotifier {
     return _items.where((food) => food.type == _selectedType).toList();
   }
 
+  List<Food> get allFoods => [..._items];
+
   void setFoodType(String type) {
     _selectedType = type;
     notifyListeners();

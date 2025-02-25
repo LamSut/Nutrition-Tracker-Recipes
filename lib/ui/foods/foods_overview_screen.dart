@@ -15,9 +15,9 @@ class FoodsOverviewScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final foodsManager = Provider.of<FoodsManager>(context, listen: false);
-    final allFoods = foodsManager.items; // remove filters before search
-    final userManager = Provider.of<UsersManager>(context, listen: false);
+    final foodsManager = Provider.of<FoodsManager>(context);
+    final allFoods = foodsManager.allFoods; // remove filters before search
+    final userManager = Provider.of<UsersManager>(context);
     final isAdmin = userManager.isAdmin();
 
     return PopScope(
@@ -30,6 +30,8 @@ class FoodsOverviewScreen extends StatelessWidget {
               ? IconButton(
                   icon: const Icon(Icons.logout),
                   onPressed: () {
+                    Provider.of<FoodsManager>(context, listen: false)
+                        .setFoodType('All');
                     Navigator.of(context)
                         .pushReplacementNamed(LoginScreen.routeName);
                   },

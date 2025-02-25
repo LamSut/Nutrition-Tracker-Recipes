@@ -8,7 +8,6 @@ import 'package:path/path.dart' as p;
 
 class FoodEditScreen extends StatefulWidget {
   static const routeName = '/food_edit';
-
   final Food? food;
 
   const FoodEditScreen({super.key, this.food});
@@ -48,11 +47,8 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-
     if (pickedFile != null) {
-      setState(() {
-        _image = File(pickedFile.path);
-      });
+      setState(() => _image = File(pickedFile.path));
     }
   }
 
@@ -70,17 +66,21 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildTextField('Name', _nameController),
+                _buildTextField('Name', _nameController, 'Enter name'),
                 _buildTextField(
-                    'Calories (kcal)', _caloriesController, 'Enter calories'),
+                    'Calories (kcal)', _caloriesController, 'Enter calories',
+                    isNumeric: true),
                 _buildTextField(
-                    'Protein (g)', _proteinController, 'Enter protein'),
-                _buildTextField('Fat (g)', _fatController, 'Enter fat'),
+                    'Protein (g)', _proteinController, 'Enter protein',
+                    isNumeric: true),
+                _buildTextField('Fat (g)', _fatController, 'Enter fat',
+                    isNumeric: true),
                 _buildTextField('Carbohydrates (g)', _carbohydratesController,
-                    'Enter carbohydrates'),
-                _buildTextField('Fiber (g)', _fiberController, 'Enter fiber'),
-                _buildDropdownField('Category', _selectedCategory,
-                    ['Fruits', 'Vegetables', 'Proteins', 'Grains', 'Dairy']),
+                    'Enter carbohydrates',
+                    isNumeric: true),
+                _buildTextField('Fiber (g)', _fiberController, 'Enter fiber',
+                    isNumeric: true),
+                _buildDropdownField(),
                 const SizedBox(height: 10),
                 _buildImagePicker(),
                 const SizedBox(height: 10),
@@ -102,10 +102,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                     child: const Text(
                       'Save',
                       style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                      ),
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20),
                     ),
                   ),
                 ),
@@ -117,60 +116,34 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller,
-      [String? placeholder]) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.grey[600])),
-        const SizedBox(height: 5),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: TextFormField(
-            controller: controller,
-            decoration: InputDecoration.collapsed(hintText: placeholder ?? ''),
-          ),
-        ),
-        const SizedBox(height: 10),
-      ],
+  Widget _buildTextField(
+      String label, TextEditingController controller, String placeholder,
+      {bool isNumeric = false}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
+      decoration: InputDecoration(labelText: label, hintText: placeholder),
+      validator: (value) {
+        if (value == null || value.trim().isEmpty) {
+          return 'Please enter $label';
+        }
+        if (isNumeric && double.tryParse(value) == null) {
+          return 'Please enter a valid number';
+        }
+        return null;
+      },
     );
   }
 
-  Widget _buildDropdownField(String label, String? value, List<String> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label,
-            style: TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.grey[600])),
-        const SizedBox(height: 5),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: 12, vertical: 15),
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: DropdownButtonHideUnderline(
-            child: DropdownButton<String>(
-              value: value,
-              isExpanded: true,
-              onChanged: (val) => setState(() => _selectedCategory = val),
-              items: items
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-            ),
-          ),
-        ),
-        const SizedBox(height: 10),
-      ],
+  Widget _buildDropdownField() {
+    return DropdownButtonFormField<String>(
+      value: _selectedCategory,
+      decoration: const InputDecoration(labelText: 'Category'),
+      items: ['Fruits', 'Vegetables', 'Proteins', 'Grains', 'Dairy']
+          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+          .toList(),
+      onChanged: (val) => setState(() => _selectedCategory = val),
+      validator: (value) => value == null ? 'Please select a category' : null,
     );
   }
 
@@ -178,32 +151,22 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Product Image',
-            style: TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.grey[600])),
+        const Text('Product Image',
+            style: TextStyle(fontWeight: FontWeight.w600)),
         const SizedBox(height: 5),
         Container(
           width: double.infinity,
-          height: 200,
+          height: 150,
           decoration: BoxDecoration(
             color: Colors.grey[200],
             borderRadius: BorderRadius.circular(8),
             border: Border.all(color: Colors.grey),
           ),
           child: _image != null
-              ? Image.file(_image!,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity)
+              ? Image.file(_image!, fit: BoxFit.cover)
               : widget.food != null
-                  ? Image.asset(widget.food!.imageUrl,
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity)
-                  : Image.asset('assets/foods/default.jpg',
-                      fit: BoxFit.cover,
-                      width: double.infinity,
-                      height: double.infinity),
+                  ? Image.asset(widget.food!.imageUrl, fit: BoxFit.cover)
+                  : Image.asset('assets/foods/default.jpg', fit: BoxFit.cover),
         ),
       ],
     );
@@ -222,13 +185,13 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
         fiber: double.parse(_fiberController.text),
         imageUrl: _image != null
             ? 'assets/foods/${p.basename(_image!.path)}'
-            : (widget.food?.imageUrl ?? 'assets/foods/default.jpg'),
+            : widget.food?.imageUrl ?? 'assets/foods/default.jpg',
       );
-
+      final foodsManager = Provider.of<FoodsManager>(context, listen: false);
       if (widget.food == null) {
-        Provider.of<FoodsManager>(context, listen: false).addFood(newFood);
+        foodsManager.addFood(newFood);
       } else {
-        Provider.of<FoodsManager>(context, listen: false).updateFood(newFood);
+        foodsManager.updateFood(newFood);
       }
       Navigator.of(context).pop();
     }
