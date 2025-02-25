@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../../models/food.dart';
 import 'food_detail_screen.dart';
+import 'food_edit_screen.dart';
+import '../user/users_manager.dart';
 
 class FoodGridTile extends StatelessWidget {
   const FoodGridTile(this.food, {super.key});
@@ -15,7 +18,16 @@ class FoodGridTile extends StatelessWidget {
         footer: FoodGridFooter(
           food: food,
           onAddToRecipePressed: () {
-            print('Add food to Recipe');
+            final isAdmin = Provider.of<UsersManager>(context, listen: false).isAdmin();
+            if (isAdmin) {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (ctx) => FoodEditScreen(food: food),
+                ),
+              );
+            } else {
+              print('Add food to Recipe');
+            }
           },
         ),
         child: GestureDetector(
@@ -48,6 +60,8 @@ class FoodGridFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isAdmin = Provider.of<UsersManager>(context, listen: false).isAdmin();
+
     return GridTileBar(
       backgroundColor: Colors.black87,
       title: Text(
@@ -58,7 +72,7 @@ class FoodGridFooter extends StatelessWidget {
         ),
       ),
       trailing: IconButton(
-        icon: const Icon(Icons.playlist_add),
+        icon: Icon(isAdmin ? Icons.edit : Icons.playlist_add),
         onPressed: onAddToRecipePressed,
         color: Theme.of(context).colorScheme.secondary,
       ),

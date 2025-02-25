@@ -24,7 +24,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = ColorScheme.fromSeed(
-      seedColor: Colors.cyan,
+      seedColor: Colors.teal,
       secondary: Colors.deepOrangeAccent,
       surface: Colors.white,
       surfaceTint: Colors.grey[200],
@@ -83,6 +83,9 @@ class MyApp extends StatelessWidget {
             break;
           case UserUpdatePasswordScreen.routeName:
             page = const SafeArea(child: UserUpdatePasswordScreen());
+            break;
+          case FoodEditScreen.routeName:
+            page = const SafeArea(child: FoodEditScreen());
             break;
           default:
             page = const SafeArea(child: FoodsOverviewScreen());

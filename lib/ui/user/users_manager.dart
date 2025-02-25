@@ -4,6 +4,17 @@ import '../../models/user.dart';
 class UsersManager extends ChangeNotifier {
   final List<User> _items = [
     User(
+      id: 'u0',
+      username: 'admin',
+      password: 'admin',
+      name: 'Admin',
+      email: 'admin@example.com',
+      profileImageUrl: '',
+      birthday: DateTime(2003, 1, 30),
+      gender: true,
+      role: true,
+    ),
+    User(
       id: 'u1',
       username: 'swimngu',
       password: 'moomoo',
@@ -12,7 +23,7 @@ class UsersManager extends ChangeNotifier {
       profileImageUrl: 'assets/avatars/moomoo.png',
       birthday: DateTime(2003, 12, 24),
       gender: false,
-      role: true,
+      role: false,
     ),
     User(
       id: 'u2',
