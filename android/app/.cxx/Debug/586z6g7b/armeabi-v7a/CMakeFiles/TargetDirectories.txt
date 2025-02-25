@@ -1,2 +1,0 @@
-F:/Dai-Hoc/4-hk2/PT-Ung-Dung-Di-Dong/Project/ct312hm04-project-LamSut/android/app/.cxx/Debug/586z6g7b/armeabi-v7a/CMakeFiles/edit_cache.dir
-F:/Dai-Hoc/4-hk2/PT-Ung-Dung-Di-Dong/Project/ct312hm04-project-LamSut/android/app/.cxx/Debug/586z6g7b/armeabi-v7a/CMakeFiles/rebuild_cache.dir
