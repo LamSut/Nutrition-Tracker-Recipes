@@ -134,7 +134,7 @@ class _UserUpdateInformationScreenState extends State<UserUpdateInformationScree
                 child: Column(
                   children: [
                     _buildTextField('Name', _nameController),
-                    _buildTextField('Email Address', _emailController, readOnly: true),
+                    _buildTextField('Email Address', _emailController, readOnly: false),
                     _buildDateField('Date of Birth', _birthdayController),
                     _buildDropdownField('Gender', _selectedGender, ['Male', 'Female']),
                   ],

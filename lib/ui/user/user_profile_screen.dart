@@ -63,7 +63,7 @@ class UserScreen extends StatelessWidget {
           Text(
             label,
             style: const TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: Colors.grey),
+                fontSize: 17, fontWeight: FontWeight.bold, color: Colors.grey),
           ),
           const SizedBox(height: 5),
           Container(

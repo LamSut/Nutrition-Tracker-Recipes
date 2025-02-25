@@ -142,4 +142,9 @@ class FoodsManager with ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void removeFood(String id) {
+    _items.removeWhere((food) => food.id == id);
+    notifyListeners();
+  }
 }
