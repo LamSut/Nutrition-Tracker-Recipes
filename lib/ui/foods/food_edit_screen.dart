@@ -218,8 +218,35 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   }
 
   void _confirmDelete() {
-    Provider.of<FoodsManager>(context, listen: false)
-        .removeFood(widget.food!.id!);
-    Navigator.of(context).pop();
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Confirm Deletion',
+            style: TextStyle(
+                color: Color.fromARGB(255, 180, 10, 0),
+                fontWeight: FontWeight.bold)),
+        content: const Text('Are you sure you want to delete this Food Item?',
+            style: TextStyle(fontSize: 18)),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Provider.of<FoodsManager>(context, listen: false)
+                  .removeFood(widget.food!.id!);
+              Navigator.of(ctx).pop();
+              Navigator.of(context).pop();
+            },
+            style: TextButton.styleFrom(
+                foregroundColor: const Color.fromARGB(255, 180, 10, 0)),
+            child: const Text('Delete', style: TextStyle(fontSize: 18)),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+            },
+            child: const Text('Cancel', style: TextStyle(fontSize: 18)),
+          ),
+        ],
+      ),
+    );
   }
 }
