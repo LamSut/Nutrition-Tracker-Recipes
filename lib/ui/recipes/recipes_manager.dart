@@ -20,7 +20,7 @@ class RecipesManager with ChangeNotifier {
           id: 'r1',
           name: 'Portuguese Style Beef',
           description:
-              'A delicious Portuguese-style beef dish with a hint of apple.',
+              'A flavorful Portuguese-style dish that combines tender beef with the natural sweetness of apples, enhanced by aromatic spices and traditional Portuguese seasonings.',
           ingredients: [
             RecipeIngredient(food: beef, quantity: 2.0),
             RecipeIngredient(food: apple, quantity: 0.5),
@@ -53,17 +53,17 @@ class RecipesManager with ChangeNotifier {
     notifyListeners();
   }
 
-  void removeRecipe(String id) {
-    _items.removeWhere((recipe) => recipe.id == id);
-    notifyListeners();
-  }
-
-  void modifyRecipe(String id, Recipe updatedRecipe) {
+  void updateRecipe(String id, Recipe updatedRecipe) {
     final index = _items.indexWhere((recipe) => recipe.id == id);
     if (index != -1) {
       _items[index] = updatedRecipe;
       notifyListeners();
     }
+  }
+
+  void removeRecipe(String id) {
+    _items.removeWhere((recipe) => recipe.id == id);
+    notifyListeners();
   }
 
   Map<String, double> calculateTotalNutrition(Recipe recipe) {

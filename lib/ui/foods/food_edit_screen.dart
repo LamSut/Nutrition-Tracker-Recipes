@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'foods_manager.dart';
 import '../../models/food.dart';
 import 'dart:io';
-import 'package:path/path.dart' as p;
 
 class FoodEditScreen extends StatefulWidget {
   static const routeName = '/food_edit';

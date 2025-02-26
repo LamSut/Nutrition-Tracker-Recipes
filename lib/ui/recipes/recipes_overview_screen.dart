@@ -5,6 +5,7 @@ import '../recipes/recipes_manager.dart';
 import '../user/users_manager.dart';
 import '../shared/app_drawer.dart';
 import 'recipe_list_tile.dart';
+import 'recipe_edit_screen.dart';
 
 class RecipesScreen extends StatelessWidget {
   static const routeName = '/recipes-overview';
@@ -22,7 +23,17 @@ class RecipesScreen extends StatelessWidget {
         .toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Your Recipes')),
+      appBar: AppBar(
+        title: const Text('Your Recipes'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.of(context).pushNamed(RecipeEditScreen.routeName);
+            },
+          ),
+        ],
+      ),
       drawer: const AppDrawer(),
       body: userRecipes.isEmpty
           ? const Center(

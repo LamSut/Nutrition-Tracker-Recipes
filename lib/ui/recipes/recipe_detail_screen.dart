@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/recipe.dart';
 import '../recipes/recipes_manager.dart';
+import 'recipe_edit_screen.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   static const routeName = '/recipe_detail';
@@ -11,6 +12,7 @@ class RecipeDetailScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final nutrition = Provider.of<RecipesManager>(context, listen: false)
         .calculateTotalNutrition(recipe);
 
@@ -33,6 +35,15 @@ class RecipeDetailScreen extends StatelessWidget {
                 child: Image.asset(recipe.imageUrl, fit: BoxFit.cover),
               ),
             ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                recipe.description,
+                style: const TextStyle(fontSize: 18),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 20),
             const Text(
               'Ingredients',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
@@ -76,6 +87,33 @@ class RecipeDetailScreen extends StatelessWidget {
                 ],
               ),
             ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: theme.colorScheme.secondary,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (context) => RecipeEditScreen(recipe: recipe),
+                  ),
+                );
+              },
+              child: const Text(
+                'Update Your Recipe',
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
           ],
         ),
       ),
