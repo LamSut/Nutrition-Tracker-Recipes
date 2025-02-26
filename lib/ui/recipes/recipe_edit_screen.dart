@@ -90,7 +90,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       if (widget.recipe == null) {
         recipesManager.addRecipe(updatedRecipe);
       } else {
-        recipesManager.updateRecipe(widget.recipe!.id!, updatedRecipe);
+        recipesManager.updateRecipe(updatedRecipe);
       }
       Navigator.of(context).pop();
     }
@@ -300,9 +300,9 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           child: Table(
             border: TableBorder.all(color: Colors.grey),
             columnWidths: const {
-              0: FlexColumnWidth(1.5),
-              1: FlexColumnWidth(1),
-              2: FlexColumnWidth(1),
+              0: FlexColumnWidth(2),
+              1: FlexColumnWidth(0.8),
+              2: FlexColumnWidth(0.6),
             },
             children: _ingredients.map((ingredient) {
               return TableRow(

@@ -10,8 +10,10 @@ void main() {
         ChangeNotifierProvider(create: (ctx) => UsersManager()),
         ChangeNotifierProvider(create: (ctx) => FoodsManager()),
         ChangeNotifierProvider(
-            create: (ctx) =>
-                RecipesManager(Provider.of<FoodsManager>(ctx, listen: false))),
+            create: (ctx) => RecipesManager(
+                  Provider.of<FoodsManager>(ctx, listen: false),
+                  Provider.of<UsersManager>(ctx, listen: false),
+                )),
       ],
       child: const MyApp(),
     ),
