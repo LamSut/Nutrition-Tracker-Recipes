@@ -4,7 +4,10 @@ import 'package:provider/provider.dart';
 import 'dart:io';
 
 import '../../models/recipe.dart';
+import '../../models/food.dart';
 import '../recipes/recipes_manager.dart';
+import '../foods/foods_manager.dart';
+import '../foods/food_detail_screen.dart';
 
 class RecipeEditScreen extends StatefulWidget {
   static const routeName = '/recipe_edit';
@@ -21,6 +24,10 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   File? _image;
+  String _currentFoodType = 'All';
+  Food? _currentFood;
+  double _quantity = 0;
+  final List<RecipeIngredient> _ingredients = [];
 
   @override
   void initState() {
@@ -28,6 +35,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     if (widget.recipe != null) {
       _nameController.text = widget.recipe!.name;
       _descriptionController.text = widget.recipe!.description;
+      _ingredients.addAll(widget.recipe!.ingredients);
     }
   }
 
@@ -39,6 +47,31 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     }
   }
 
+  void _navigateToFoodDetail(Food food) {
+    Navigator.of(context)
+        .pushNamed(FoodDetailScreen.routeName, arguments: food.id);
+  }
+
+  void _addIngredient() {
+    if (_currentFood != null && _quantity > 0) {
+      setState(() {
+        int existingIndex = _ingredients
+            .indexWhere((ingredient) => ingredient.food.id == _currentFood!.id);
+
+        if (existingIndex != -1) {
+          _ingredients[existingIndex] = RecipeIngredient(
+            food: _ingredients[existingIndex].food,
+            quantity: _ingredients[existingIndex].quantity + _quantity,
+          );
+        } else {
+          _ingredients.add(
+            RecipeIngredient(food: _currentFood!, quantity: _quantity),
+          );
+        }
+      });
+    }
+  }
+
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       final recipesManager =
@@ -47,7 +80,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
         id: widget.recipe?.id ?? DateTime.now().toString(),
         name: _nameController.text,
         description: _descriptionController.text,
-        ingredients: widget.recipe?.ingredients ?? [],
+        ingredients: _ingredients,
         imageUrl: _image?.path ??
             widget.recipe?.imageUrl ??
             'assets/recipes/default.jpg',
@@ -61,133 +94,6 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       }
       Navigator.of(context).pop();
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe'),
-      ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField('Recipe Name', _nameController, 'Enter name'),
-              _buildTextField(
-                  'Description', _descriptionController, 'Enter description',
-                  isMultiline: true),
-              const SizedBox(height: 20),
-              _buildImagePicker(),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text(
-                    'Choose New Image from Gallery',
-                    style: TextStyle(fontSize: 16),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: _submitForm,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            Theme.of(context).colorScheme.secondary,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: const Text(
-                        'Update',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 20),
-                      ),
-                    ),
-                  ),
-                  if (widget.recipe != null) ...[
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _confirmDelete,
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 180, 10, 0),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
-                          minimumSize: const Size(double.infinity, 50),
-                        ),
-                        child: const Text(
-                          'Delete',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 20),
-                        ),
-                      ),
-                    ),
-                  ]
-                ],
-              ),
-              const SizedBox(height: 60),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTextField(
-      String label, TextEditingController controller, String placeholder,
-      {bool isMultiline = false}) {
-    return TextFormField(
-      controller: controller,
-      keyboardType: isMultiline ? TextInputType.multiline : TextInputType.text,
-      maxLines: isMultiline ? 3 : 1,
-      decoration: InputDecoration(
-        labelText: label,
-        labelStyle: const TextStyle(fontSize: 22),
-        hintText: placeholder,
-      ),
-      validator: (value) =>
-          value == null || value.trim().isEmpty ? 'Please enter $label' : null,
-    );
-  }
-
-  Widget _buildImagePicker() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Recipe Image', style: TextStyle(fontSize: 22)),
-        const SizedBox(height: 10),
-        Container(
-          width: double.infinity,
-          height: 250,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            border: Border.all(color: Colors.grey),
-          ),
-          child: _image != null
-              ? Image.file(_image!, fit: BoxFit.cover)
-              : widget.recipe?.imageUrl.isNotEmpty == true
-                  ? Image.asset(widget.recipe!.imageUrl, fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                      return const Center(child: Text('Image not found'));
-                    })
-                  : Image.asset('assets/recipes/default.jpg',
-                      fit: BoxFit.cover),
-        ),
-      ],
-    );
   }
 
   void _confirmDelete() {
@@ -214,6 +120,321 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           ),
         ],
       ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final foodsManager = Provider.of<FoodsManager>(context);
+    final recipesManager = Provider.of<RecipesManager>(context);
+    final availableFoods = foodsManager.items;
+    final nutrition = recipesManager.calculateTotalNutrition(
+      Recipe(
+          id: '',
+          name: '',
+          description: '',
+          ingredients: _ingredients,
+          imageUrl: '',
+          userID: ''),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+          title:
+              Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField('Recipe Name', _nameController, 'Enter name'),
+              _buildTextField(
+                  'Description', _descriptionController, 'Enter description',
+                  isMultiline: true),
+              const SizedBox(height: 20),
+              _buildImagePicker(),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text(
+                    'Choose New Image from Gallery',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildFoodSelector(availableFoods),
+              const SizedBox(height: 40),
+              _buildCurrentIngredientsTable(),
+              const SizedBox(height: 20),
+              _buildNutritionTable(nutrition),
+              const SizedBox(height: 10),
+              _buildActionButtons(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTextField(
+      String label, TextEditingController controller, String placeholder,
+      {bool isMultiline = false}) {
+    return TextFormField(
+      controller: controller,
+      keyboardType: isMultiline ? TextInputType.multiline : TextInputType.text,
+      maxLines: isMultiline ? 3 : 1,
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        hintText: placeholder,
+      ),
+      validator: (value) =>
+          value == null || value.trim().isEmpty ? 'Please enter $label' : null,
+    );
+  }
+
+  Widget _buildImagePicker() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Recipe Image',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 10),
+        Container(
+          width: double.infinity,
+          height: 250,
+          decoration: BoxDecoration(
+            color: Colors.grey[200],
+            border: Border.all(color: Colors.grey),
+          ),
+          child: _image != null
+              ? Image.file(_image!, fit: BoxFit.cover)
+              : widget.recipe?.imageUrl.isNotEmpty == true
+                  ? Image.asset(widget.recipe!.imageUrl, fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                      return const Center(child: Text('Image not found'));
+                    })
+                  : Image.asset('assets/recipes/default.jpg',
+                      fit: BoxFit.cover),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFoodSelector(List<Food> availableFoods) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text('Selected Ingredients',
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+        DropdownButton<String>(
+          value: _currentFoodType,
+          onChanged: (value) => setState(() => _currentFoodType = value!),
+          items: ['All', 'Fruits', 'Vegetables', 'Proteins', 'Dairy']
+              .map((type) => DropdownMenuItem(value: type, child: Text(type)))
+              .toList(),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: DropdownButton<Food>(
+                value: _currentFood,
+                onChanged: (value) => setState(() => _currentFood = value),
+                items: availableFoods
+                    .where((food) =>
+                        _currentFoodType == 'All' ||
+                        food.type == _currentFoodType)
+                    .map((food) => DropdownMenuItem(
+                        value: food,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(food.name),
+                            IconButton(
+                              icon: const Icon(Icons.visibility),
+                              onPressed: () => _navigateToFoodDetail(food),
+                            ),
+                          ],
+                        )))
+                    .toList(),
+              ),
+            ),
+            SizedBox(width: 20),
+            SizedBox(
+              width: 120,
+              child: TextFormField(
+                keyboardType: TextInputType.number,
+                decoration:
+                    const InputDecoration(labelText: 'Quantity (x100g)'),
+                style: const TextStyle(fontSize: 18),
+                onChanged: (value) => _quantity = double.tryParse(value) ?? 1.0,
+              ),
+            ),
+            IconButton(
+              icon: const Icon(Icons.add_circle, color: Colors.teal),
+              onPressed: _addIngredient,
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCurrentIngredientsTable() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        const Text(
+          'Current Ingredients',
+          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
+        ),
+        const SizedBox(height: 10),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: 20),
+          child: Table(
+            border: TableBorder.all(color: Colors.grey),
+            columnWidths: const {
+              0: FlexColumnWidth(1.5),
+              1: FlexColumnWidth(1),
+              2: FlexColumnWidth(1),
+            },
+            children: _ingredients.map((ingredient) {
+              return TableRow(
+                children: [
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 4, horizontal: 6),
+                      child: Row(
+                        children: [
+                          Text(
+                            ingredient.food.name,
+                            style: const TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.w500),
+                            textAlign: TextAlign.left,
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.visibility, size: 24),
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                            onPressed: () =>
+                                _navigateToFoodDetail(ingredient.food),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 2),
+                      child: Text(
+                        '${ingredient.quantity * 100}g',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  TableCell(
+                    verticalAlignment: TableCellVerticalAlignment.middle,
+                    child: Center(
+                      child: IconButton(
+                        icon: const Icon(Icons.delete,
+                            color: Colors.red, size: 22),
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(),
+                        onPressed: () =>
+                            setState(() => _ingredients.remove(ingredient)),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }).toList(),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNutritionTable(Map<String, double> nutrition) {
+    return Container(
+      margin: const EdgeInsets.only(top: 10, right: 20, bottom: 10, left: 20),
+      child: Column(
+        children: [
+          const Center(
+            child: Text(
+              'Nutrition Facts',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+          ),
+          const SizedBox(height: 10),
+          Table(
+            border: TableBorder.all(color: Colors.grey),
+            columnWidths: const {
+              0: FlexColumnWidth(1.5),
+              1: FlexColumnWidth(1),
+            },
+            children: [
+              _buildTableRow('Calories', '${nutrition['calories']}kcal'),
+              _buildTableRow('Protein', '${nutrition['protein']}g'),
+              _buildTableRow('Fat', '${nutrition['fat']}g'),
+              _buildTableRow('Carbohydrates', '${nutrition['carbohydrates']}g'),
+              _buildTableRow('Fiber', '${nutrition['fiber']}g'),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  TableRow _buildTableRow(String label, String value) {
+    return TableRow(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(label, style: const TextStyle(fontSize: 18)),
+        ),
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(value, style: const TextStyle(fontSize: 18)),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons() {
+    return Row(
+      children: [
+        Expanded(
+          child: ElevatedButton(
+            onPressed: _submitForm,
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary),
+            child: const Text('Update Recipe',
+                style: TextStyle(color: Colors.white, fontSize: 20)),
+          ),
+        ),
+        if (widget.recipe != null) ...[
+          const SizedBox(width: 10),
+          Expanded(
+            child: ElevatedButton(
+              onPressed: _confirmDelete,
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              child: const Text('Delete Recipe',
+                  style: TextStyle(color: Colors.white, fontSize: 20)),
+            ),
+          ),
+        ]
+      ],
     );
   }
 }

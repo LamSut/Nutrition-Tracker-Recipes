@@ -78,7 +78,7 @@ class RecipeDetailScreen extends StatelessWidget {
                   1: FlexColumnWidth(1),
                 },
                 children: [
-                  _buildTableRow('Calories', '${nutrition['calories']} kcal'),
+                  _buildTableRow('Calories', '${nutrition['calories']}kcal'),
                   _buildTableRow('Protein', '${nutrition['protein']}g'),
                   _buildTableRow('Fat', '${nutrition['fat']}g'),
                   _buildTableRow(

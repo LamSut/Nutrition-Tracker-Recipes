@@ -18,19 +18,6 @@ class FoodDetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(food.name),
-        actions: [
-          if (isAdmin)
-            IconButton(
-              icon: const Icon(Icons.edit),
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (context) => FoodEditScreen(food: food),
-                  ),
-                );
-              },
-            ),
-        ],
       ),
       body: SingleChildScrollView(
         child: Column(

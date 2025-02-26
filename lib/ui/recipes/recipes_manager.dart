@@ -81,12 +81,16 @@ class RecipesManager with ChangeNotifier {
       totalFiber += ingredient.food.fiber * ingredient.quantity;
     }
 
+    double roundTo2Decimals(double value) {
+      return double.parse(value.toStringAsFixed(2));
+    }
+
     return {
-      'calories': totalCalories,
-      'protein': totalProtein,
-      'fat': totalFat,
-      'carbohydrates': totalCarbohydrates,
-      'fiber': totalFiber,
+      'calories': roundTo2Decimals(totalCalories),
+      'protein': roundTo2Decimals(totalProtein),
+      'fat': roundTo2Decimals(totalFat),
+      'carbohydrates': roundTo2Decimals(totalCarbohydrates),
+      'fiber': roundTo2Decimals(totalFiber),
     };
   }
 }
