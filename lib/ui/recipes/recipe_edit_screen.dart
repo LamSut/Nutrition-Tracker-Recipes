@@ -234,7 +234,12 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
         DropdownButton<String>(
           value: _currentFoodType,
-          onChanged: (value) => setState(() => _currentFoodType = value!),
+          onChanged: (value) {
+            setState(() {
+              _currentFoodType = value!;
+              _currentFood = null; // Reset food when type changes
+            });
+          },
           items: ['All', 'Fruits', 'Vegetables', 'Proteins', 'Dairy']
               .map((type) => DropdownMenuItem(value: type, child: Text(type)))
               .toList(),
@@ -243,7 +248,11 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           children: [
             Expanded(
               child: DropdownButton<Food>(
-                value: _currentFood,
+                value: availableFoods.any((food) =>
+                        _currentFoodType == 'All' ||
+                        food.type == _currentFoodType)
+                    ? _currentFood
+                    : null,
                 onChanged: (value) => setState(() => _currentFood = value),
                 items: availableFoods
                     .where((food) =>
@@ -264,7 +273,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                     .toList(),
               ),
             ),
-            SizedBox(width: 20),
+            const SizedBox(width: 20),
             SizedBox(
               width: 120,
               child: TextFormField(

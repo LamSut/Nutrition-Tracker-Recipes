@@ -49,43 +49,38 @@ class FoodDetailScreen extends StatelessWidget {
                 children: [
                   _buildNutrientTable(),
                   const SizedBox(height: 16),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: theme.colorScheme.secondary,
-                      foregroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 8, horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
+                  Visibility(
+                    visible: isAdmin,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 8, horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => FoodEditScreen(food: food),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Edit Food Information',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    onPressed: isAdmin
-                        ? () {
-                            Navigator.of(context).push(
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    FoodEditScreen(food: food),
-                              ),
-                            );
-                          }
-                        : () {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                  content: Text(
-                                      '${food.name} added to your recipes!')),
-                            );
-                          },
-                    child: Text(
-                      isAdmin ? 'Edit Food Information' : 'Add to Recipe',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
+                  )
                 ],
               ),
             ),
+            const SizedBox(height: 20),
           ],
         ),
       ),

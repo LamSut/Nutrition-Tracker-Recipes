@@ -41,6 +41,12 @@ class MyApp extends StatelessWidget {
         elevation: 4,
         shadowColor: colorScheme.shadow,
       ),
+      inputDecorationTheme: InputDecorationTheme(
+        errorStyle: TextStyle(
+          fontSize: 18,
+          color: Colors.redAccent,
+        ),
+      ),
     );
 
     return MaterialApp(
@@ -107,6 +113,9 @@ class MyApp extends StatelessWidget {
             break;
           case UserUpdatePasswordScreen.routeName:
             page = const SafeArea(child: UserUpdatePasswordScreen());
+            break;
+          case SignupScreen.routeName:
+            page = const SafeArea(child: SignupScreen());
             break;
           default:
             page = const SafeArea(child: FoodsOverviewScreen());

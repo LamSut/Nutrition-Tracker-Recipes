@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../foods/foods_overview_screen.dart';
 import '../user/users_manager.dart';
+import 'signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -38,8 +40,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
     return PopScope(
       canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) {
+          SystemNavigator.pop();
+        }
+      },
       child: Scaffold(
-        backgroundColor: colorScheme.primary,
+        backgroundColor: const Color.fromARGB(255, 0, 90, 90),
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -101,7 +108,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 36),
+                  const SizedBox(height: 20),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
@@ -120,6 +127,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       style: TextStyle(
                         fontSize: 22,
                         fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pushNamed(context, SignupScreen.routeName);
+                    },
+                    child: const Text(
+                      'Don\'t have an account? Sign Up',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
                       ),
                     ),
                   ),

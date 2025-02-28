@@ -64,6 +64,16 @@ class UsersManager extends ChangeNotifier {
     return false;
   }
 
+  Future<void> addUser(User newUser) async {
+    _items.add(
+      newUser.copyWith(
+        id: 'u${DateTime.now().toIso8601String()}',
+        profileImageUrl: 'assets/avatars/default.png',
+      ).copyWith(password: newUser.password),
+    );
+    notifyListeners();
+  }
+
   void updateUser(User updatedUser) {
     final index = _items.indexWhere((user) => user.id == updatedUser.id);
     if (index != -1) {

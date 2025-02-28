@@ -17,17 +17,12 @@ class FoodGridTile extends StatelessWidget {
       child: GridTile(
         footer: FoodGridFooter(
           food: food,
-          onAddToRecipePressed: () {
-            final isAdmin = Provider.of<UsersManager>(context, listen: false).isAdmin();
-            if (isAdmin) {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (ctx) => FoodEditScreen(food: food),
-                ),
-              );
-            } else {
-              print('Add food to Recipe');
-            }
+          onEditPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (ctx) => FoodEditScreen(food: food),
+              ),
+            );
           },
         ),
         child: GestureDetector(
@@ -52,11 +47,11 @@ class FoodGridFooter extends StatelessWidget {
   const FoodGridFooter({
     super.key,
     required this.food,
-    this.onAddToRecipePressed,
+    this.onEditPressed,
   });
 
   final Food food;
-  final void Function()? onAddToRecipePressed;
+  final void Function()? onEditPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -71,11 +66,13 @@ class FoodGridFooter extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       ),
-      trailing: IconButton(
-        icon: Icon(isAdmin ? Icons.edit : Icons.playlist_add),
-        onPressed: onAddToRecipePressed,
-        color: Theme.of(context).colorScheme.secondary,
-      ),
+      trailing: isAdmin
+          ? IconButton(
+              icon: const Icon(Icons.edit),
+              onPressed: onEditPressed,
+              color: Theme.of(context).colorScheme.secondary,
+            )
+          : null, // Không hiển thị gì nếu không phải admin
     );
   }
 }

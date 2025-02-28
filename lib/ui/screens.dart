@@ -13,4 +13,5 @@ export 'user/user_profile_screen.dart';
 export 'user/user_update_information_screen.dart';
 export 'user/user_update_password_screen.dart';
 
+export 'auth/signup_screen.dart';
 export 'auth/login_screen.dart';
