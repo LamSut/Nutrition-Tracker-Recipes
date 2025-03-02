@@ -1,5 +1,5 @@
-name: ct312h_project
-description: 'A new Flutter project.'
+name: NTR
+description: 'Nutrion Tracker Recipes'
 
 publish_to: 'none'
 
@@ -11,6 +11,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_native_splash: ^2.4.5
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
   provider: ^6.1.2
@@ -21,6 +22,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: "^0.13.1"
   flutter_lints: ^5.0.0
 
 flutter:
@@ -31,6 +33,7 @@ flutter:
     - assets/fonts/
     - assets/foods/
     - assets/food-types/
+    - assets/logos/
     - assets/recipes/
 
   fonts:
@@ -39,3 +42,19 @@ flutter:
         - asset: assets/fonts/calibri-regular.ttf
         - asset: assets/fonts/calibri-bold.ttf
           weight: 800
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logos/app-icon.jpg"
+
+flutter_native_splash:
+  color: "#ffffff"
+  image: assets\logos\app-splash.jpg
+  android_12:
+    image: assets\logos\app-splash.jpg
+    color: "#ffffff"
+
+  fullscreen: true
+  android: true
+  ios: true

@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  Future.delayed(const Duration(seconds: 2), () {
+    FlutterNativeSplash.remove();
+  });
+
   runApp(
     MultiProvider(
       providers: [
