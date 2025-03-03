@@ -11,17 +11,15 @@ class AppDrawer extends StatelessWidget {
       child: Column(
         children: <Widget>[
           AppBar(
-            title: const Text('Halo!'),
+            backgroundColor: Colors.black87,
+            title: Row(
+              children: [
+                Image.asset('assets/logos/app-icon.png', height: 30, width: 30),
+                const SizedBox(width: 10),
+                const Text('Halo!'),
+              ],
+            ),
             automaticallyImplyLeading: false,
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.food_bank),
-            title: const Text('Foods'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(FoodsOverviewScreen.routeName);
-            },
           ),
           const Divider(),
           ListTile(

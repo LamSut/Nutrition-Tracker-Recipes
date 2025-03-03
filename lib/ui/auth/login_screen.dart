@@ -46,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 0, 90, 90),
+        backgroundColor: const Color.fromARGB(255, 0, 70, 70),
         body: Center(
           child: SingleChildScrollView(
             padding: const EdgeInsets.all(16.0),
@@ -55,13 +55,24 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Text(
-                    'Nutrition Tracker Recipes',
-                    style: const TextStyle(
-                      fontSize: 32,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Text(
+                        'Nutrition Tracker Recipes',
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 12),
+                      Image.asset(
+                        'assets/logos/app-icon.png',
+                        height: 40,
+                        width: 40,
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 28),
                   TextFormField(
@@ -136,7 +147,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       Navigator.pushNamed(context, SignupScreen.routeName);
                     },
                     child: const Text(
-                      'Don\'t have an account? Sign Up',
+                      'Don\'t have an account? Sign Up!',
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 18,
