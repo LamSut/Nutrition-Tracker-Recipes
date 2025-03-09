@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/food.dart';
 import 'food_detail_screen.dart';
 import 'food_edit_screen.dart';
-import '../user/users_manager.dart';
+import '../user/user_manager.dart';
 
 class FoodGridTile extends StatelessWidget {
   const FoodGridTile(this.food, {super.key});
@@ -55,7 +55,7 @@ class FoodGridFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isAdmin = Provider.of<UsersManager>(context, listen: false).isAdmin();
+    final isAdmin = Provider.of<UserManager>(context, listen: false).isAdmin;
 
     return GridTileBar(
       backgroundColor: Colors.black87,

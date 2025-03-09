@@ -12,12 +12,16 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_native_splash: ^2.4.5
+  flutter_dotenv: ^5.2.1
   cupertino_icons: ^1.0.8
   intl: ^0.20.2
   provider: ^6.1.2
-  image_picker: ^0.8.4+3
+  image_picker: ^1.1.2
   path_provider: ^2.0.11
-  path: ^1.8.3
+  path: ^1.9.1
+  pocketbase: ^0.22.0
+  shared_preferences: ^2.5.2
+  http: ^1.3.0
 
 dev_dependencies:
   flutter_test:
@@ -35,6 +39,7 @@ flutter:
     - assets/food-types/
     - assets/logos/
     - assets/recipes/
+    - .env
 
   fonts:
     - family: Calibri

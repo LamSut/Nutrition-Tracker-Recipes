@@ -39,23 +39,24 @@ class AppDrawer extends StatelessWidget {
                   .pushReplacementNamed(RecipesOverviewScreen.routeName);
             },
           ),
+          // const Divider(),
+          // ListTile(
+          //   leading: const Icon(Icons.settings),
+          //   title: const Text('User'),
+          //   onTap: () {
+          //     Navigator.of(context)
+          //         .pushReplacementNamed(UserProfileScreen.routeName);
+          //   },
+          // ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.settings),
-            title: const Text('User'),
-            onTap: () {
-              Navigator.of(context)
-                  .pushReplacementNamed(UserProfileScreen.routeName);
-            },
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.logout),
+            leading: const Icon(Icons.exit_to_app),
             title: const Text('Logout'),
             onTap: () {
-              Provider.of<FoodsManager>(context, listen: false)
-                  .setFoodType('All');
-              Navigator.of(context).pushReplacementNamed(LoginScreen.routeName);
+              Navigator.of(context)
+                ..pop()
+                ..pushReplacementNamed('/');
+              context.read<UserManager>().logout();
             },
           ),
         ],

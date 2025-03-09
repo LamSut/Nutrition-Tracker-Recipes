@@ -4,9 +4,9 @@ import '../shared/app_drawer.dart';
 import 'foods_grid.dart';
 import 'food_search_delegate.dart';
 import 'foods_manager.dart';
-import '../user/users_manager.dart';
+import '../user/user_manager.dart';
 import 'food_edit_screen.dart';
-import '../user/user_login_screen.dart';
+import '../user/user_auth_screen.dart';
 
 class FoodsOverviewScreen extends StatelessWidget {
   static const routeName = '/food_overview';
@@ -17,8 +17,8 @@ class FoodsOverviewScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final foodsManager = Provider.of<FoodsManager>(context);
     final allFoods = foodsManager.allFoods; // remove filters before search
-    final userManager = Provider.of<UsersManager>(context);
-    final isAdmin = userManager.isAdmin();
+    final userManager = Provider.of<UserManager>(context);
+    final isAdmin = userManager.isAdmin;
 
     return PopScope(
       canPop: !isAdmin, // prevent back navigation
@@ -33,7 +33,7 @@ class FoodsOverviewScreen extends StatelessWidget {
                     Provider.of<FoodsManager>(context, listen: false)
                         .setFoodType('All');
                     Navigator.of(context)
-                        .pushReplacementNamed(LoginScreen.routeName);
+                        .pushReplacementNamed(UserAuthScreen.routeName);
                   },
                 )
               : null,

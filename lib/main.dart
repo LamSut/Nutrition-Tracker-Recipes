@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:provider/provider.dart';
 import 'ui/screens.dart';
 import 'ui/shared/navigation_utils.dart';
 
-void main() {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await dotenv.load();
   Future.delayed(const Duration(seconds: 2), () {
     FlutterNativeSplash.remove();
   });
@@ -13,13 +15,14 @@ void main() {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (ctx) => UsersManager()),
+        ChangeNotifierProvider(create: (ctx) => UserManager()),
         ChangeNotifierProvider(create: (ctx) => FoodsManager()),
         ChangeNotifierProvider(
-            create: (ctx) => RecipesManager(
-                  Provider.of<FoodsManager>(ctx, listen: false),
-                  Provider.of<UsersManager>(ctx, listen: false),
-                )),
+          create: (ctx) => RecipesManager(
+            Provider.of<FoodsManager>(ctx, listen: false),
+            Provider.of<UserManager>(ctx, listen: false),
+          ),
+        ),
       ],
       child: const MyApp(),
     ),
@@ -47,31 +50,39 @@ class MyApp extends StatelessWidget {
         elevation: 4,
         shadowColor: colorScheme.shadow,
       ),
-      inputDecorationTheme: InputDecorationTheme(
-        errorStyle: TextStyle(
-          fontSize: 18,
-          color: Colors.redAccent,
-        ),
-      ),
     );
 
     return MaterialApp(
       title: 'NTR',
       debugShowCheckedModeBanner: false,
       theme: themeData,
-      initialRoute: LoginScreen.routeName,
+      home: Consumer<UserManager>(
+        builder: (ctx, usersManager, child) {
+          if (usersManager.isAuth) {
+            return const SafeArea(child: FoodsOverviewScreen());
+          } else {
+            return FutureBuilder(
+              future: usersManager.tryAutoLogin(),
+              builder: (ctx, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                } else {
+                  return const SafeArea(child: UserAuthScreen());
+                }
+              },
+            );
+          }
+        },
+      ),
       onGenerateRoute: (settings) {
         Widget page;
         switch (settings.name) {
-          case LoginScreen.routeName:
-            page = const SafeArea(child: LoginScreen());
-            break;
           case FoodDetailScreen.routeName:
-            final productId = settings.arguments as String;
+            final foodId = settings.arguments as String;
             page = SafeArea(
               child: Consumer<FoodsManager>(
                 builder: (context, foodsManager, _) => FoodDetailScreen(
-                  foodsManager.findById(productId)!,
+                  foodsManager.findById(foodId)!,
                 ),
               ),
             );
@@ -111,23 +122,20 @@ class MyApp extends StatelessWidget {
               ),
             );
             break;
-          case UserProfileScreen.routeName:
-            page = const SafeArea(child: UserProfileScreen());
-            break;
-          case UserUpdateInformationScreen.routeName:
-            page = const SafeArea(child: UserUpdateInformationScreen());
-            break;
-          case UserUpdatePasswordScreen.routeName:
-            page = const SafeArea(child: UserUpdatePasswordScreen());
-            break;
-          case SignupScreen.routeName:
-            page = const SafeArea(child: SignupScreen());
-            break;
+          // case UserProfileScreen.routeName:
+          //   page = const SafeArea(child: UserProfileScreen());
+          //   break;
+          // case UserUpdateInformationScreen.routeName:
+          //   page = const SafeArea(child: UserUpdateInformationScreen());
+          //   break;
+          // case UserUpdatePasswordScreen.routeName:
+          //   page = const SafeArea(child: UserUpdatePasswordScreen());
+          //   break;
           default:
             page = const SafeArea(child: FoodsOverviewScreen());
             break;
         }
-        return createRoute(page);
+        return createRoute(page); // slide transition animation
       },
     );
   }

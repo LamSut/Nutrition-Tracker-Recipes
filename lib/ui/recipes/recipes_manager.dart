@@ -2,14 +2,14 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import '../../models/recipe.dart';
 import '../foods/foods_manager.dart';
-import '../user/users_manager.dart';
+import '../user/user_manager.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as p;
 
 class RecipesManager with ChangeNotifier {
   List<Recipe> _items = [];
   final FoodsManager _foodsManager;
-  final UsersManager _usersManager;
+  final UserManager _usersManager;
 
   RecipesManager(this._foodsManager, this._usersManager) {
     _initializeRecipes();
@@ -31,7 +31,7 @@ class RecipesManager with ChangeNotifier {
             RecipeIngredient(food: apple, quantity: 0.5),
           ],
           imageUrl: 'assets/recipes/portuguese-style-beef.png',
-          userID: 'u1',
+          userID: '3agzto7w3962q54',
         ),
       );
     }
@@ -40,7 +40,7 @@ class RecipesManager with ChangeNotifier {
   List<Recipe> get items => [..._items];
 
   List<Recipe> get userRecipes {
-    final user = _usersManager.loggedInUser;
+    final user = _usersManager.user;
     return user != null
         ? _items.where((r) => r.userID == user.id).toList()
         : [];
@@ -61,7 +61,7 @@ class RecipesManager with ChangeNotifier {
   }
 
   Future<void> addRecipe(Recipe recipe) async {
-    final user = _usersManager.loggedInUser;
+    final user = _usersManager.user;
     if (user == null) {
       throw Exception('User must be logged in to add a recipe.');
     }

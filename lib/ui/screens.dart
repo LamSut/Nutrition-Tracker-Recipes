@@ -8,10 +8,9 @@ export 'recipes/recipes_overview_screen.dart';
 export 'recipes/recipe_detail_screen.dart';
 export 'recipes/recipe_edit_screen.dart';
 
-export 'user/users_manager.dart';
+export 'user/user_manager.dart';
 export 'user/user_profile_screen.dart';
 export 'user/user_update_information_screen.dart';
 export 'user/user_update_password_screen.dart';
 
-export 'user/user_signup_screen.dart';
-export 'user/user_login_screen.dart';
+export 'user/user_auth_screen.dart';

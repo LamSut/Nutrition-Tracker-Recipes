@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/food.dart';
-import '../user/users_manager.dart';
+import '../user/user_manager.dart';
 import 'food_edit_screen.dart';
 
 class FoodDetailScreen extends StatelessWidget {
@@ -13,7 +13,7 @@ class FoodDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isAdmin = Provider.of<UsersManager>(context, listen: false).isAdmin();
+    final isAdmin = Provider.of<UserManager>(context, listen: false).isAdmin;
 
     return Scaffold(
       appBar: AppBar(

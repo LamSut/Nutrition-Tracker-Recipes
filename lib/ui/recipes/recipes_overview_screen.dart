@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../recipes/recipes_manager.dart';
-import '../user/users_manager.dart';
+import '../user/user_manager.dart';
 import '../shared/app_drawer.dart';
 import 'recipe_list_tile.dart';
 import 'recipe_edit_screen.dart';
@@ -15,8 +15,8 @@ class RecipesOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final recipesManager = Provider.of<RecipesManager>(context);
-    final usersManager = Provider.of<UsersManager>(context, listen: false);
-    final loggedInUser = usersManager.loggedInUser;
+    final usersManager = Provider.of<UserManager>(context, listen: false);
+    final loggedInUser = usersManager.user;
 
     final userRecipes = recipesManager.items
         .where((recipe) => recipe.userID == loggedInUser?.id)
