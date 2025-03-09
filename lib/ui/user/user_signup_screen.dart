@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import '../../models/user.dart';
-import '../user/users_manager.dart';
-import 'login_screen.dart';
+import 'users_manager.dart';
+import 'user_login_screen.dart';
 
 class SignupScreen extends StatefulWidget {
   static const routeName = '/signup';

@@ -5,9 +5,9 @@ import '../user/users_manager.dart';
 import 'user_update_information_screen.dart';
 import 'user_update_password_screen.dart';
 
-class UserScreen extends StatelessWidget {
+class UserProfileScreen extends StatelessWidget {
   static const routeName = '/user_profile';
-  const UserScreen({super.key});
+  const UserProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

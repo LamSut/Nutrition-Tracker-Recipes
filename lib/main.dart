@@ -86,8 +86,8 @@ class MyApp extends StatelessWidget {
               ),
             );
             break;
-          case RecipesScreen.routeName:
-            page = const SafeArea(child: RecipesScreen());
+          case RecipesOverviewScreen.routeName:
+            page = const SafeArea(child: RecipesOverviewScreen());
             break;
           case RecipeDetailScreen.routeName:
             final recipeId = settings.arguments as String;
@@ -111,8 +111,8 @@ class MyApp extends StatelessWidget {
               ),
             );
             break;
-          case UserScreen.routeName:
-            page = const SafeArea(child: UserScreen());
+          case UserProfileScreen.routeName:
+            page = const SafeArea(child: UserProfileScreen());
             break;
           case UserUpdateInformationScreen.routeName:
             page = const SafeArea(child: UserUpdateInformationScreen());

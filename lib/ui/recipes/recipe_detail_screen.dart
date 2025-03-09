@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../models/recipe.dart';
 import '../recipes/recipes_manager.dart';
 import 'recipe_edit_screen.dart';
+import 'recipe_nutrient_table.dart';
 
 class RecipeDetailScreen extends StatelessWidget {
   static const routeName = '/recipe_detail';
@@ -15,7 +16,6 @@ class RecipeDetailScreen extends StatelessWidget {
     final theme = Theme.of(context);
     final nutrition = Provider.of<RecipesManager>(context, listen: false)
         .calculateTotalNutrition(recipe);
-
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.name),
@@ -59,7 +59,25 @@ class RecipeDetailScreen extends StatelessWidget {
                 },
                 children: recipe.ingredients.map((ingredient) {
                   String quantityInGrams = '${ingredient.quantity * 100}g';
-                  return _buildTableRow(ingredient.food.name, quantityInGrams);
+                  return TableRow(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          ingredient.food.name,
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Text(
+                          quantityInGrams,
+                          style: const TextStyle(fontSize: 18),
+                        ),
+                      ),
+                    ],
+                  );
                 }).toList(),
               ),
             ),
@@ -68,24 +86,18 @@ class RecipeDetailScreen extends StatelessWidget {
               'Nutrition Facts',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
-            Container(
-              margin: const EdgeInsets.only(
-                  top: 10, right: 20, bottom: 10, left: 20),
-              child: Table(
-                border: TableBorder.all(color: Colors.grey),
-                columnWidths: const {
-                  0: FlexColumnWidth(2),
-                  1: FlexColumnWidth(1),
-                },
-                children: [
-                  _buildTableRow('Calories', '${nutrition['calories']}kcal'),
-                  _buildTableRow('Protein', '${nutrition['protein']}g'),
-                  _buildTableRow('Fat', '${nutrition['fat']}g'),
-                  _buildTableRow(
-                      'Carbohydrates', '${nutrition['carbohydrates']}g'),
-                  _buildTableRow('Fiber', '${nutrition['fiber']}g'),
-                ],
-              ),
+            RecipeNutrientTable(
+              controllers: {
+                'calories':
+                    TextEditingController(text: '${nutrition['calories']}kcal'),
+                'protein':
+                    TextEditingController(text: '${nutrition['protein']}g'),
+                'fat': TextEditingController(text: '${nutrition['fat']}g'),
+                'carbohydrates': TextEditingController(
+                    text: '${nutrition['carbohydrates']}g'),
+                'fiber': TextEditingController(text: '${nutrition['fiber']}g'),
+              },
+              isEditable: false,
             ),
             const SizedBox(height: 20),
             ElevatedButton(
@@ -107,37 +119,13 @@ class RecipeDetailScreen extends StatelessWidget {
               },
               child: const Text(
                 'Update Your Recipe',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 20),
           ],
         ),
       ),
-    );
-  }
-
-  TableRow _buildTableRow(String name, String value) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            name,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            value,
-            style: const TextStyle(fontSize: 18),
-          ),
-        ),
-      ],
     );
   }
 }

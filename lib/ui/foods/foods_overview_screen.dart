@@ -6,7 +6,7 @@ import 'food_search_delegate.dart';
 import 'foods_manager.dart';
 import '../user/users_manager.dart';
 import 'food_edit_screen.dart';
-import '../auth/login_screen.dart';
+import '../user/user_login_screen.dart';
 
 class FoodsOverviewScreen extends StatelessWidget {
   static const routeName = '/food_overview';

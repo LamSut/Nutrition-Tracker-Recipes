@@ -8,6 +8,7 @@ import '../../models/food.dart';
 import '../recipes/recipes_manager.dart';
 import '../foods/foods_manager.dart';
 import '../foods/food_detail_screen.dart';
+import 'recipe_nutrient_table.dart';
 
 class RecipeEditScreen extends StatefulWidget {
   static const routeName = '/recipe_edit';
@@ -57,16 +58,14 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       setState(() {
         int existingIndex = _ingredients
             .indexWhere((ingredient) => ingredient.food.id == _currentFood!.id);
-
         if (existingIndex != -1) {
           _ingredients[existingIndex] = RecipeIngredient(
             food: _ingredients[existingIndex].food,
             quantity: _ingredients[existingIndex].quantity + _quantity,
           );
         } else {
-          _ingredients.add(
-            RecipeIngredient(food: _currentFood!, quantity: _quantity),
-          );
+          _ingredients
+              .add(RecipeIngredient(food: _currentFood!, quantity: _quantity));
         }
       });
     }
@@ -86,7 +85,6 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
             'assets/recipes/default.jpg',
         userID: widget.recipe?.userID ?? '',
       );
-
       if (widget.recipe == null) {
         recipesManager.addRecipe(updatedRecipe);
       } else {
@@ -108,8 +106,9 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
             onPressed: () {
               Provider.of<RecipesManager>(context, listen: false)
                   .removeRecipe(widget.recipe!.id!);
-              Navigator.of(context).pop();
-              Navigator.of(context).pop();
+
+              Navigator.of(context).popUntil(
+                  (route) => route.settings.name == '/recipes-overview');
             },
             child: const Text('Delete',
                 style: TextStyle(color: Colors.red, fontSize: 22)),
@@ -137,7 +136,6 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           imageUrl: '',
           userID: ''),
     );
-
     return Scaffold(
       appBar: AppBar(
           title:
@@ -159,10 +157,8 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               Center(
                 child: ElevatedButton(
                   onPressed: _pickImage,
-                  child: const Text(
-                    'Choose New Image from Gallery',
-                    style: TextStyle(fontSize: 16),
-                  ),
+                  child: const Text('Choose New Image from Gallery',
+                      style: TextStyle(fontSize: 16)),
                 ),
               ),
               const SizedBox(height: 20),
@@ -170,7 +166,20 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               const SizedBox(height: 40),
               _buildCurrentIngredientsTable(),
               const SizedBox(height: 20),
-              _buildNutritionTable(nutrition),
+              RecipeNutrientTable(
+                controllers: {
+                  'calories': TextEditingController(
+                      text: '${nutrition['calories']} kcal'),
+                  'protein':
+                      TextEditingController(text: '${nutrition['protein']}g'),
+                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
+                  'carbohydrates': TextEditingController(
+                      text: '${nutrition['carbohydrates']}g'),
+                  'fiber':
+                      TextEditingController(text: '${nutrition['fiber']}g'),
+                },
+                isEditable: false,
+              ),
               const SizedBox(height: 10),
               _buildActionButtons(),
               const SizedBox(height: 20),
@@ -237,7 +246,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           onChanged: (value) {
             setState(() {
               _currentFoodType = value!;
-              _currentFood = null; // Reset food when type changes
+              _currentFood = null;
             });
           },
           items: ['All', 'Fruits', 'Vegetables', 'Proteins', 'Dairy']
@@ -259,17 +268,18 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                         _currentFoodType == 'All' ||
                         food.type == _currentFoodType)
                     .map((food) => DropdownMenuItem(
-                        value: food,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(food.name),
-                            IconButton(
-                              icon: const Icon(Icons.visibility),
-                              onPressed: () => _navigateToFoodDetail(food),
-                            ),
-                          ],
-                        )))
+                          value: food,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(food.name),
+                              IconButton(
+                                icon: const Icon(Icons.visibility),
+                                onPressed: () => _navigateToFoodDetail(food),
+                              ),
+                            ],
+                          ),
+                        ))
                     .toList(),
               ),
             ),
@@ -298,11 +308,9 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text(
-          'Current Ingredients',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ),
+        const Text('Current Ingredients',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center),
         const SizedBox(height: 10),
         Container(
           margin: const EdgeInsets.symmetric(horizontal: 20),
@@ -323,12 +331,10 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                           vertical: 4, horizontal: 6),
                       child: Row(
                         children: [
-                          Text(
-                            ingredient.food.name,
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w500),
-                            textAlign: TextAlign.left,
-                          ),
+                          Text(ingredient.food.name,
+                              style: const TextStyle(
+                                  fontSize: 18, fontWeight: FontWeight.bold),
+                              textAlign: TextAlign.left),
                           IconButton(
                             icon: const Icon(Icons.visibility, size: 24),
                             padding: EdgeInsets.zero,
@@ -344,12 +350,10 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                     verticalAlignment: TableCellVerticalAlignment.middle,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Text(
-                        '${ingredient.quantity * 100}g',
-                        style: const TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w500),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: Text('${ingredient.quantity * 100}g',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center),
                     ),
                   ),
                   TableCell(
@@ -369,52 +373,6 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               );
             }).toList(),
           ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNutritionTable(Map<String, double> nutrition) {
-    return Container(
-      margin: const EdgeInsets.only(top: 10, right: 20, bottom: 10, left: 20),
-      child: Column(
-        children: [
-          const Center(
-            child: Text(
-              'Nutrition Facts',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-          ),
-          const SizedBox(height: 10),
-          Table(
-            border: TableBorder.all(color: Colors.grey),
-            columnWidths: const {
-              0: FlexColumnWidth(1.5),
-              1: FlexColumnWidth(1),
-            },
-            children: [
-              _buildTableRow('Calories', '${nutrition['calories']}kcal'),
-              _buildTableRow('Protein', '${nutrition['protein']}g'),
-              _buildTableRow('Fat', '${nutrition['fat']}g'),
-              _buildTableRow('Carbohydrates', '${nutrition['carbohydrates']}g'),
-              _buildTableRow('Fiber', '${nutrition['fiber']}g'),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  TableRow _buildTableRow(String label, String value) {
-    return TableRow(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(label, style: const TextStyle(fontSize: 18)),
-        ),
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(value, style: const TextStyle(fontSize: 18)),
         ),
       ],
     );

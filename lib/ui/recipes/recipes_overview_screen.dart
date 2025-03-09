@@ -7,10 +7,10 @@ import '../shared/app_drawer.dart';
 import 'recipe_list_tile.dart';
 import 'recipe_edit_screen.dart';
 
-class RecipesScreen extends StatelessWidget {
+class RecipesOverviewScreen extends StatelessWidget {
   static const routeName = '/recipes-overview';
 
-  const RecipesScreen({super.key});
+  const RecipesOverviewScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

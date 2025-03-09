@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../foods/foods_overview_screen.dart';
-import '../user/users_manager.dart';
-import 'signup_screen.dart';
+import 'users_manager.dart';
+import 'user_signup_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = '/login';
@@ -55,26 +55,21 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        'Nutrition Tracker Recipes',
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                      SizedBox(width: 12),
-                      Image.asset(
-                        'assets/logos/app-icon.png',
-                        height: 40,
-                        width: 40,
-                      ),
-                    ],
+                  Image.asset(
+                    'assets/logos/app-icon.png',
+                    height: 160,
+                    width: 160,
                   ),
-                  const SizedBox(height: 28),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Nutrition Tracker Recipes',
+                    style: const TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
                   TextFormField(
                     controller: _usernameController,
                     decoration: InputDecoration(

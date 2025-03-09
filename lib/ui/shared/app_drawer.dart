@@ -23,11 +23,20 @@ class AppDrawer extends StatelessWidget {
           ),
           const Divider(),
           ListTile(
+            leading: const Icon(Icons.food_bank),
+            title: const Text('Foods'),
+            onTap: () {
+              Navigator.of(context)
+                  .pushReplacementNamed(FoodsOverviewScreen.routeName);
+            },
+          ),
+          const Divider(),
+          ListTile(
             leading: const Icon(Icons.list_alt_rounded),
             title: const Text('Recipes'),
             onTap: () {
               Navigator.of(context)
-                  .pushReplacementNamed(RecipesScreen.routeName);
+                  .pushReplacementNamed(RecipesOverviewScreen.routeName);
             },
           ),
           const Divider(),
@@ -35,7 +44,8 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.settings),
             title: const Text('User'),
             onTap: () {
-              Navigator.of(context).pushReplacementNamed(UserScreen.routeName);
+              Navigator.of(context)
+                  .pushReplacementNamed(UserProfileScreen.routeName);
             },
           ),
           const Divider(),
