@@ -97,36 +97,18 @@ class UserService {
 
   Future<User> login(String username, String password) async {
     final pb = await getPocketbaseInstance();
-    print('PocketBase instance: $pb');
 
     try {
-      print('Logging in with username: $username');
-
-      // Thực hiện xác thực
       final authRecord =
           await pb.collection('users').authWithPassword(username, password);
 
-      print('Authentication successful: ${authRecord.record.toJson()}');
-
-      // Lấy URL ảnh đại diện
       final imageUrl = _getProfileImageUrl(pb, authRecord.record);
-      print('Profile image URL: $imageUrl');
 
-      // Chuẩn bị dữ liệu JSON cho User model
       final jsonData = authRecord.record.toJson()
         ..addAll({'imageUrl': imageUrl});
 
-      print('User JSON: $jsonData');
-
-      // Tạo đối tượng User
-      final user = User.fromJson(jsonData);
-      print('User created: $user');
-
-      return user;
-    } catch (error, stackTrace) {
-      print('Login error: $error');
-      print('StackTrace: $stackTrace');
-
+      return User.fromJson(jsonData);
+    } catch (error) {
       if (error is ClientException) {
         throw Exception(error.response['message']);
       }

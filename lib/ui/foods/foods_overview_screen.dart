@@ -6,7 +6,6 @@ import 'food_search_delegate.dart';
 import 'foods_manager.dart';
 import '../user/user_manager.dart';
 import 'food_edit_screen.dart';
-import '../user/user_auth_screen.dart';
 
 class FoodsOverviewScreen extends StatelessWidget {
   static const routeName = '/food_overview';
@@ -33,9 +32,9 @@ class FoodsOverviewScreen extends StatelessWidget {
                     Provider.of<FoodsManager>(context, listen: false)
                         .setFoodType('All');
                     Navigator.of(context)
-                        .pushReplacementNamed(UserAuthScreen.routeName);
-                  },
-                )
+                        .pushNamedAndRemoveUntil('/', (route) => false);
+                    context.read<UserManager>().logout();
+                  })
               : null,
           actions: <Widget>[
             if (isAdmin)

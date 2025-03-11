@@ -256,7 +256,7 @@ class _AuthCardState extends State<AuthCard> {
           fontWeight: FontWeight.bold,
         ),
       ),
-      child: Text(_authMode == AuthMode.login ? 'LOGIN' : 'SIGN UP'),
+      child: Text(_authMode == AuthMode.login ? 'LOGIN' : 'SIGNUP'),
     );
   }
 
@@ -265,8 +265,8 @@ class _AuthCardState extends State<AuthCard> {
       onPressed: _switchAuthMode,
       child: Text(
         _authMode == AuthMode.login
-            ? 'Don\'t have an account? Sign up!'
-            : 'Already have an account? Log in!',
+            ? 'Don\'t have an account? Signup!'
+            : 'Already have an account? Login!',
         style: const TextStyle(fontSize: 16),
       ),
     );

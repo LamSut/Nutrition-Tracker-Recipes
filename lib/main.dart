@@ -122,9 +122,9 @@ class MyApp extends StatelessWidget {
               ),
             );
             break;
-          // case UserProfileScreen.routeName:
-          //   page = const SafeArea(child: UserProfileScreen());
-          //   break;
+          case UserProfileScreen.routeName:
+            page = const SafeArea(child: UserProfileScreen());
+            break;
           // case UserUpdateInformationScreen.routeName:
           //   page = const SafeArea(child: UserUpdateInformationScreen());
           //   break;

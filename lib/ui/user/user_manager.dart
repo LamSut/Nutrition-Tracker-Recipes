@@ -42,12 +42,9 @@ class UserManager extends ChangeNotifier {
 
   Future<User> login(String username, String password) async {
     final user = await _userService.login(username, password);
-    final updatedUser = user.imageUrl!.trim().isEmpty
-        ? user.copyWith(imageUrl: 'assets/avatars/default.png')
-        : user;
-    _loggedInUser = updatedUser;
+    _loggedInUser = user;
     notifyListeners();
-    return updatedUser;
+    return user;
   }
 
   Future<void> tryAutoLogin() async {
