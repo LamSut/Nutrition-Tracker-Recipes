@@ -42,14 +42,30 @@ class FoodSearchDelegate extends SearchDelegate<String> {
     return ListView.builder(
       itemCount: filteredFoods.length,
       itemBuilder: (ctx, index) {
+        final food = filteredFoods[index];
         return ListTile(
-          title: Text(filteredFoods[index].name),
-          leading: Image.asset(filteredFoods[index].imageUrl,
-              width: 70, height: 70, fit: BoxFit.cover),
+          title: Text(food.name),
+          leading: food.imageUrl.startsWith('http')
+              ? Image.network(
+                  food.imageUrl,
+                  width: 70,
+                  height: 70,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.error),
+                )
+              : Image.asset(
+                  food.imageUrl,
+                  width: 70,
+                  height: 70,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Icon(Icons.error),
+                ),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
-                builder: (ctx) => FoodDetailScreen(filteredFoods[index]),
+                builder: (ctx) => FoodDetailScreen(food),
               ),
             );
           },

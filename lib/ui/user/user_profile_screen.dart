@@ -27,18 +27,18 @@ class UserProfileScreen extends StatelessWidget {
                   children: [
                     const SizedBox(height: 20),
                     CircleAvatar(
-                      radius: 80,
+                      radius: 100,
                       backgroundImage: _buildProfileImage(user.imageUrl),
                     ),
                     const SizedBox(height: 20),
                     const Text(
                       'User Information',
                       style: TextStyle(
-                        fontSize: 24,
+                        fontSize: 28,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(height: 20),
+                    const SizedBox(height: 10),
                     _buildInfoField('Username', user.username),
                     _buildInfoField('Full Name', user.name),
                     _buildInfoField('Gender', user.gender ? 'Male' : 'Female'),

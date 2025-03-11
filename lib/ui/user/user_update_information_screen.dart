@@ -84,7 +84,7 @@ class _UserUpdateInformationScreenState
               alignment: Alignment.bottomRight,
               children: [
                 CircleAvatar(
-                  radius: 80,
+                  radius: 100,
                   backgroundImage: _profileImage != null
                       ? FileImage(_profileImage!)
                       : (_user.imageUrl != null && _user.imageUrl!.isNotEmpty
@@ -92,16 +92,20 @@ class _UserUpdateInformationScreenState
                           : null) as ImageProvider<Object>?,
                   child: (_profileImage == null &&
                           (_user.imageUrl == null || _user.imageUrl!.isEmpty))
-                      ? const Icon(Icons.person, size: 80)
+                      ? const Icon(Icons.person, size: 100)
                       : null,
                 ),
-                IconButton(
-                  icon: const Icon(Icons.edit_outlined, color: Colors.black),
-                  iconSize: 32,
-                  onPressed: _pickImage,
-                  padding: EdgeInsets.zero,
-                  constraints: const BoxConstraints(),
-                ),
+                CircleAvatar(
+                  radius: 26,
+                  backgroundColor: Theme.of(context).colorScheme.secondary,
+                  child: IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.black87),
+                    iconSize: 28,
+                    onPressed: _pickImage,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                )
               ],
             ),
             const SizedBox(height: 20),
@@ -125,17 +129,18 @@ class _UserUpdateInformationScreenState
             ElevatedButton(
               onPressed: _submitForm,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.primary,
+                padding: const EdgeInsets.only(
+                    top: 10, bottom: 10, left: 40, right: 40),
+                backgroundColor: Theme.of(context).colorScheme.secondary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
-                minimumSize: const Size(double.infinity, 50),
+                    borderRadius: BorderRadius.circular(16)),
               ),
               child: const Text(
                 'Save Changes',
                 style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
-                    fontSize: 20),
+                    fontSize: 24),
               ),
             ),
           ],
@@ -150,11 +155,13 @@ class _UserUpdateInformationScreenState
       children: [
         Text(label,
             style: TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+                fontSize: 18)),
         const SizedBox(height: 5),
         TextFormField(
           controller: controller,
-          style: const TextStyle(fontSize: 16),
+          style: const TextStyle(fontSize: 18),
           decoration: InputDecoration(
             filled: true,
             fillColor: Colors.grey[200],
@@ -181,7 +188,9 @@ class _UserUpdateInformationScreenState
       children: [
         Text(label,
             style: TextStyle(
-                fontWeight: FontWeight.w600, color: Colors.grey[600])),
+                fontWeight: FontWeight.w600,
+                color: Colors.grey[600],
+                fontSize: 18)),
         const SizedBox(height: 5),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -193,6 +202,10 @@ class _UserUpdateInformationScreenState
             child: DropdownButton<String>(
               value: value,
               isExpanded: true,
+              style: const TextStyle(
+                fontSize: 18,
+                color: Colors.black,
+              ),
               onChanged: (val) => setState(() => _selectedGender = val),
               items: items
                   .map((e) => DropdownMenuItem(value: e, child: Text(e)))

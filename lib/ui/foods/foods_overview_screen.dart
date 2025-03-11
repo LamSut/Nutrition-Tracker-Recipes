@@ -7,15 +7,38 @@ import 'foods_manager.dart';
 import '../user/user_manager.dart';
 import 'food_edit_screen.dart';
 
-class FoodsOverviewScreen extends StatelessWidget {
+class FoodsOverviewScreen extends StatefulWidget {
   static const routeName = '/food_overview';
 
-  const FoodsOverviewScreen({super.key});
+  const FoodsOverviewScreen({Key? key}) : super(key: key);
+
+  @override
+  _FoodsOverviewScreenState createState() => _FoodsOverviewScreenState();
+}
+
+class _FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
+  bool _isLoading = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchFoods();
+  }
+
+  Future<void> _fetchFoods() async {
+    setState(() {
+      _isLoading = true;
+    });
+    await Provider.of<FoodsManager>(context, listen: false).fetchFoods();
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final foodsManager = Provider.of<FoodsManager>(context);
-    final allFoods = foodsManager.allFoods; // remove filters before search
+    final allFoods = foodsManager.allFoods;
     final userManager = Provider.of<UserManager>(context);
     final isAdmin = userManager.isAdmin;
 
@@ -24,17 +47,18 @@ class FoodsOverviewScreen extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Food Items'),
-          automaticallyImplyLeading: !isAdmin, // remove back button
+          automaticallyImplyLeading:
+              !isAdmin, // remove back button for non-admin
           leading: isAdmin
               ? IconButton(
                   icon: const Icon(Icons.logout),
                   onPressed: () {
-                    Provider.of<FoodsManager>(context, listen: false)
-                        .setFoodType('All');
+                    foodsManager.setFoodType('All');
                     Navigator.of(context)
                         .pushNamedAndRemoveUntil('/', (route) => false);
                     context.read<UserManager>().logout();
-                  })
+                  },
+                )
               : null,
           actions: <Widget>[
             if (isAdmin)
@@ -56,19 +80,21 @@ class FoodsOverviewScreen extends StatelessWidget {
           ],
         ),
         drawer: isAdmin ? null : const AppDrawer(),
-        body: Column(
-          children: [
-            const FoodTypeFilterMenu(),
-            const Expanded(child: FoodsGrid()),
-          ],
-        ),
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
+                children: const [
+                  FoodTypeFilterMenu(),
+                  Expanded(child: FoodsGrid()),
+                ],
+              ),
       ),
     );
   }
 }
 
 class FoodTypeFilterMenu extends StatelessWidget {
-  const FoodTypeFilterMenu({super.key});
+  const FoodTypeFilterMenu({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +128,7 @@ class FoodTypeFilterMenu extends StatelessWidget {
                     ? Theme.of(context).colorScheme.secondary
                     : Colors.white,
                 borderRadius: BorderRadius.circular(16),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
                     color: Colors.black12,
                     blurRadius: 6,

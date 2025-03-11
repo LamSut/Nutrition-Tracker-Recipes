@@ -33,10 +33,19 @@ class FoodGridTile extends StatelessWidget {
               arguments: food.id,
             );
           },
-          child: Image.asset(
-            food.imageUrl,
-            fit: BoxFit.cover,
-          ),
+          child: food.imageUrl.startsWith('http')
+              ? Image.network(
+                  food.imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Center(child: Text('Image not found')),
+                )
+              : Image.asset(
+                  food.imageUrl,
+                  fit: BoxFit.contain,
+                  errorBuilder: (context, error, stackTrace) =>
+                      const Center(child: Text('Image not found')),
+                ),
         ),
       ),
     );
@@ -72,7 +81,7 @@ class FoodGridFooter extends StatelessWidget {
               onPressed: onEditPressed,
               color: Theme.of(context).colorScheme.secondary,
             )
-          : null, // Không hiển thị gì nếu không phải admin
+          : null,
     );
   }
 }

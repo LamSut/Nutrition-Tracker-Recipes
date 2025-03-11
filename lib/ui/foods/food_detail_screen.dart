@@ -23,7 +23,8 @@ class FoodDetailScreen extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Container(
-              margin: const EdgeInsets.all(20),
+              margin: const EdgeInsets.only(
+                  top: 30, bottom: 10, left: 30, right: 30),
               padding: const EdgeInsets.all(2),
               decoration: BoxDecoration(
                 border: Border.all(color: Colors.grey, width: 2),
@@ -31,7 +32,19 @@ class FoodDetailScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(food.imageUrl, fit: BoxFit.cover),
+                child: food.imageUrl.startsWith('http')
+                    ? Image.network(
+                        food.imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Center(child: Text('Image not found')),
+                      )
+                    : Image.asset(
+                        food.imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            const Center(child: Text('Image not found')),
+                      ),
               ),
             ),
             const SizedBox(height: 4),
