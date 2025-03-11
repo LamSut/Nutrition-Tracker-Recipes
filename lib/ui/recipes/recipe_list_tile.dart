@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/recipe.dart';
-import '../recipes/recipes_manager.dart';
+import 'recipes_manager.dart';
 import 'recipe_detail_screen.dart';
 import 'recipe_edit_screen.dart';
 
@@ -45,8 +45,8 @@ class RecipeListTile extends StatelessWidget {
           ),
         );
       },
-      onDismissed: (direction) {
-        recipesManager.removeRecipe(recipe.id!);
+      onDismissed: (direction) async {
+        await recipesManager.deleteRecipe(recipe.id!);
       },
       child: Card(
         shape: RoundedRectangleBorder(
@@ -58,11 +58,13 @@ class RecipeListTile extends StatelessWidget {
           contentPadding: const EdgeInsets.all(12.0),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
+            child: Image.network(
               recipe.imageUrl,
               width: 70,
               height: 70,
-              fit: BoxFit.cover,
+              fit: BoxFit.contain,
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.image, size: 70),
             ),
           ),
           title: Text(
@@ -81,18 +83,22 @@ class RecipeListTile extends StatelessWidget {
               arguments: recipe.id,
             );
           },
-          trailing: IconButton(
-            icon: Icon(
-              Icons.edit,
+          trailing: Container(
+            decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.secondary,
-              size: 30,
+              shape: BoxShape.circle,
             ),
-            onPressed: () {
-              Navigator.of(context).pushNamed(
-                RecipeEditScreen.routeName,
-                arguments: recipe.id,
-              );
-            },
+            padding: const EdgeInsets.all(0),
+            child: IconButton(
+              icon: const Icon(Icons.edit, color: Colors.black87),
+              iconSize: 24,
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  RecipeEditScreen.routeName,
+                  arguments: recipe.id,
+                );
+              },
+            ),
           ),
         ),
       ),

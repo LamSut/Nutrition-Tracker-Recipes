@@ -21,7 +21,6 @@ class RecipeNutrientTable extends StatelessWidget {
           1: FlexColumnWidth(1),
         },
         children: [
-          _buildTableRow('Portion', '100g', isHeader: true),
           _buildTableRow('Calories', controllers['calories']!, isNumeric: true),
           _buildTableRow('Protein', controllers['protein']!, isNumeric: true),
           _buildTableRow('Fat', controllers['fat']!, isNumeric: true),
@@ -34,7 +33,7 @@ class RecipeNutrientTable extends StatelessWidget {
   }
 
   TableRow _buildTableRow(String label, dynamic value,
-      {bool isHeader = false, bool isNumeric = false}) {
+      {bool isNumeric = false}) {
     return TableRow(
       children: [
         Padding(

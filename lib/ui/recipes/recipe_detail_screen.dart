@@ -9,13 +9,14 @@ class RecipeDetailScreen extends StatelessWidget {
   static const routeName = '/recipe_detail';
   final Recipe recipe;
 
-  const RecipeDetailScreen(this.recipe, {super.key});
+  const RecipeDetailScreen({super.key, required this.recipe});
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final nutrition = Provider.of<RecipesManager>(context, listen: false)
         .calculateTotalNutrition(recipe);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(recipe.name),
@@ -32,7 +33,7 @@ class RecipeDetailScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.asset(recipe.imageUrl, fit: BoxFit.cover),
+                child: Image.network(recipe.imageUrl, fit: BoxFit.contain),
               ),
             ),
             Padding(

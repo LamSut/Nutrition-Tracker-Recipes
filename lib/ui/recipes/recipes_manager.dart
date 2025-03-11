@@ -1,112 +1,53 @@
-import 'dart:io';
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import '../../models/recipe.dart';
-import '../foods/foods_manager.dart';
-import '../user/user_manager.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:path/path.dart' as p;
+import '../../services/recipes_service.dart';
 
 class RecipesManager with ChangeNotifier {
+  final RecipesService _recipesService = RecipesService();
   List<Recipe> _items = [];
-  final FoodsManager _foodsManager;
-  final UserManager _usersManager;
 
-  RecipesManager(this._foodsManager, this._usersManager) {
-    _initializeRecipes();
-  }
-
-  void _initializeRecipes() {
-    final beef = _foodsManager.findById('f6');
-    final apple = _foodsManager.findById('f1');
-
-    if (beef != null && apple != null) {
-      _items.add(
-        Recipe(
-          id: 'r1',
-          name: 'Portuguese Style Beef',
-          description:
-              'A flavorful Portuguese-style dish that combines tender beef with the natural sweetness of apples, enhanced by aromatic spices and traditional Portuguese seasonings.',
-          ingredients: [
-            RecipeIngredient(food: beef, quantity: 2.0),
-            RecipeIngredient(food: apple, quantity: 0.5),
-          ],
-          imageUrl: 'assets/recipes/portuguese-style-beef.png',
-          userID: '3agzto7w3962q54',
-        ),
-      );
-    }
-  }
+  int get itemCount => _items.length;
 
   List<Recipe> get items => [..._items];
 
-  List<Recipe> get userRecipes {
-    final user = _usersManager.user;
-    return user != null
-        ? _items.where((r) => r.userID == user.id).toList()
-        : [];
+  Recipe? findById(String id) {
+    try {
+      return _items.firstWhere((item) => item.id == id);
+    } catch (error) {
+      return null;
+    }
   }
 
-  Recipe findById(String id) {
-    return _items.firstWhere(
-      (recipe) => recipe.id == id,
-      orElse: () => Recipe(
-        id: 'unknown',
-        name: 'Unknown Recipe',
-        description: 'No recipe found.',
-        ingredients: [],
-        imageUrl: '',
-        userID: '',
-      ),
-    );
-  }
-
-  Future<void> addRecipe(Recipe recipe) async {
-    final user = _usersManager.user;
-    if (user == null) {
-      throw Exception('User must be logged in to add a recipe.');
-    }
-
-    String imageUrl = recipe.imageUrl.isEmpty
-        ? 'assets/recipes/default.jpg'
-        : recipe.imageUrl;
-
-    if (!imageUrl.startsWith('assets/recipes/')) {
-      final appDir = await getApplicationDocumentsDirectory();
-      final fileName = p.basename(imageUrl);
-      await File(imageUrl).copy('${appDir.path}/$fileName');
-      imageUrl = 'assets/recipes/$fileName';
-    }
-
-    final newRecipe = Recipe(
-      id: 'r${DateTime.now().toIso8601String()}',
-      name: recipe.name,
-      description: recipe.description,
-      ingredients: recipe.ingredients,
-      imageUrl: imageUrl,
-      userID: user.id!,
-    );
-
-    _items.add(newRecipe);
+  Future<void> fetchRecipes({bool filteredByUser = false}) async {
+    _items = await _recipesService.fetchRecipes(filteredByUser: filteredByUser);
     notifyListeners();
   }
 
-  Future<void> updateRecipe(Recipe recipe) async {
-    final index = _items.indexWhere((item) => item.id == recipe.id);
-    if (index != -1) {
-      if (!recipe.imageUrl.startsWith('assets/recipes/')) {
-        final appDir = await getApplicationDocumentsDirectory();
-        final fileName = p.basename(recipe.imageUrl);
-        await File(recipe.imageUrl).copy('${appDir.path}/$fileName');
-        recipe = recipe.copyWith(imageUrl: 'assets/recipes/$fileName');
-      }
-      _items[index] = recipe;
+  Future<void> addRecipe(Recipe recipe) async {
+    final newRecipe = await _recipesService.addRecipe(recipe);
+    if (newRecipe != null) {
+      _items.add(newRecipe);
       notifyListeners();
     }
   }
 
-  void removeRecipe(String id) {
-    _items.removeWhere((recipe) => recipe.id == id);
-    notifyListeners();
+  Future<void> updateRecipe(Recipe recipe) async {
+    final index = _items.indexWhere((item) => item.id == recipe.id);
+    if (index >= 0) {
+      final updatedRecipe = await _recipesService.updateRecipe(recipe);
+      if (updatedRecipe != null) {
+        _items[index] = updatedRecipe;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> deleteRecipe(String id) async {
+    final index = _items.indexWhere((item) => item.id == id);
+    if (index >= 0 && await _recipesService.deleteRecipe(id)) {
+      _items.removeAt(index);
+      notifyListeners();
+    }
   }
 
   Map<String, double> calculateTotalNutrition(Recipe recipe) {

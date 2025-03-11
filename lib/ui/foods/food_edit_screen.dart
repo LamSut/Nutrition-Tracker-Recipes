@@ -213,13 +213,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     return TextFormField(
       controller: controller,
       keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: placeholder,
-        labelStyle: const TextStyle(fontSize: 18),
-        hintStyle: const TextStyle(fontSize: 18),
-      ),
-      style: const TextStyle(fontSize: 18),
+      decoration: InputDecoration(labelText: label, hintText: placeholder),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Please enter $label';
@@ -235,16 +229,9 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   Widget _buildDropdownField() {
     return DropdownButtonFormField<String>(
       value: _selectedCategory,
-      decoration: const InputDecoration(
-        labelText: 'Category',
-        labelStyle: TextStyle(fontSize: 18),
-      ),
-      style: const TextStyle(fontSize: 18),
+      decoration: const InputDecoration(labelText: 'Category'),
       items: ['Proteins', 'Grains', 'Vegetables', 'Fruits', 'Dairy']
-          .map((e) => DropdownMenuItem(
-                value: e,
-                child: Text(e, style: const TextStyle(fontSize: 18)),
-              ))
+          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
           .toList(),
       onChanged: (val) => setState(() => _selectedCategory = val),
       validator: (value) => value == null ? 'Please select a category' : null,
@@ -255,7 +242,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Product Image', style: TextStyle(fontSize: 18)),
+        const Text('Product Image'),
         const SizedBox(height: 10),
         Container(
           width: double.infinity,

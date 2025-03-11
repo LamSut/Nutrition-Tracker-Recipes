@@ -75,16 +75,17 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     if (_formKey.currentState!.validate()) {
       final recipesManager =
           Provider.of<RecipesManager>(context, listen: false);
+
       final updatedRecipe = Recipe(
         id: widget.recipe?.id ?? DateTime.now().toString(),
         name: _nameController.text,
         description: _descriptionController.text,
         ingredients: _ingredients,
-        imageUrl: _image?.path ??
-            widget.recipe?.imageUrl ??
-            'assets/recipes/default.jpg',
-        userID: widget.recipe?.userID ?? '',
+        featuredImage: _image,
+        imageUrl: widget.recipe?.imageUrl ?? '',
+        userId: widget.recipe?.userId ?? '',
       );
+
       if (widget.recipe == null) {
         recipesManager.addRecipe(updatedRecipe);
       } else {
@@ -99,93 +100,28 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Confirm Deletion'),
-        content: const Text('Are you sure you want to delete this recipe?',
-            style: TextStyle(fontSize: 20)),
+        content: const Text(
+          'Are you sure you want to delete this recipe?',
+          style: TextStyle(fontSize: 20),
+        ),
         actions: [
           TextButton(
             onPressed: () {
               Provider.of<RecipesManager>(context, listen: false)
-                  .removeRecipe(widget.recipe!.id!);
-
+                  .deleteRecipe(widget.recipe!.id!);
               Navigator.of(context).popUntil(
                   (route) => route.settings.name == '/recipes-overview');
             },
-            child: const Text('Delete',
-                style: TextStyle(color: Colors.red, fontSize: 22)),
+            child: const Text(
+              'Delete',
+              style: TextStyle(color: Colors.red, fontSize: 22),
+            ),
           ),
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: const Text('Cancel', style: TextStyle(fontSize: 22)),
           ),
         ],
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final foodsManager = Provider.of<FoodsManager>(context);
-    final recipesManager = Provider.of<RecipesManager>(context);
-    final availableFoods = foodsManager.items;
-    final nutrition = recipesManager.calculateTotalNutrition(
-      Recipe(
-          id: '',
-          name: '',
-          description: '',
-          ingredients: _ingredients,
-          imageUrl: '',
-          userID: ''),
-    );
-    return Scaffold(
-      appBar: AppBar(
-          title:
-              Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField('Recipe Name', _nameController, 'Enter name'),
-              _buildTextField(
-                  'Description', _descriptionController, 'Enter description',
-                  isMultiline: true),
-              const SizedBox(height: 20),
-              _buildImagePicker(),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text('Choose New Image from Gallery',
-                      style: TextStyle(fontSize: 16)),
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildFoodSelector(availableFoods),
-              const SizedBox(height: 40),
-              _buildCurrentIngredientsTable(),
-              const SizedBox(height: 20),
-              RecipeNutrientTable(
-                controllers: {
-                  'calories': TextEditingController(
-                      text: '${nutrition['calories']} kcal'),
-                  'protein':
-                      TextEditingController(text: '${nutrition['protein']}g'),
-                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
-                  'carbohydrates': TextEditingController(
-                      text: '${nutrition['carbohydrates']}g'),
-                  'fiber':
-                      TextEditingController(text: '${nutrition['fiber']}g'),
-                },
-                isEditable: false,
-              ),
-              const SizedBox(height: 10),
-              _buildActionButtons(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
       ),
     );
   }
@@ -216,20 +152,22 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
         const SizedBox(height: 10),
         Container(
           width: double.infinity,
-          height: 250,
           decoration: BoxDecoration(
             color: Colors.grey[200],
             border: Border.all(color: Colors.grey),
           ),
           child: _image != null
-              ? Image.file(_image!, fit: BoxFit.cover)
-              : widget.recipe?.imageUrl.isNotEmpty == true
-                  ? Image.asset(widget.recipe!.imageUrl, fit: BoxFit.cover,
+              ? Image.file(_image!, fit: BoxFit.contain)
+              : widget.recipe != null && widget.recipe!.imageUrl.isNotEmpty
+                  ? Image.network(
+                      widget.recipe!.imageUrl,
+                      fit: BoxFit.contain,
                       errorBuilder: (context, error, stackTrace) {
-                      return const Center(child: Text('Image not found'));
-                    })
+                        return const Center(child: Text('Image not found'));
+                      },
+                    )
                   : Image.asset('assets/recipes/default.jpg',
-                      fit: BoxFit.cover),
+                      fit: BoxFit.contain),
         ),
       ],
     );
@@ -306,74 +244,93 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
 
   Widget _buildCurrentIngredientsTable() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text('Current Ingredients',
+        SizedBox(
+          width: double.infinity, // Đảm bảo tiêu đề căn giữa toàn màn hình
+          child: const Text(
+            'Current Ingredients',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-            textAlign: TextAlign.center),
-        const SizedBox(height: 10),
-        Container(
-          margin: const EdgeInsets.symmetric(horizontal: 20),
-          child: Table(
-            border: TableBorder.all(color: Colors.grey),
-            columnWidths: const {
-              0: FlexColumnWidth(2),
-              1: FlexColumnWidth(0.8),
-              2: FlexColumnWidth(0.6),
-            },
-            children: _ingredients.map((ingredient) {
-              return TableRow(
-                children: [
-                  TableCell(
-                    verticalAlignment: TableCellVerticalAlignment.middle,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 4, horizontal: 6),
-                      child: Row(
-                        children: [
-                          Text(ingredient.food.name,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold),
-                              textAlign: TextAlign.left),
-                          IconButton(
-                            icon: const Icon(Icons.visibility, size: 24),
-                            padding: EdgeInsets.zero,
-                            constraints: const BoxConstraints(),
-                            onPressed: () =>
-                                _navigateToFoodDetail(ingredient.food),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  TableCell(
-                    verticalAlignment: TableCellVerticalAlignment.middle,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 2),
-                      child: Text('${ingredient.quantity * 100}g',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.w500),
-                          textAlign: TextAlign.center),
-                    ),
-                  ),
-                  TableCell(
-                    verticalAlignment: TableCellVerticalAlignment.middle,
-                    child: Center(
-                      child: IconButton(
-                        icon: const Icon(Icons.delete,
-                            color: Colors.red, size: 22),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                        onPressed: () =>
-                            setState(() => _ingredients.remove(ingredient)),
-                      ),
-                    ),
-                  ),
-                ],
-              );
-            }).toList(),
+            textAlign: TextAlign.center,
           ),
         ),
+        const SizedBox(height: 10),
+        if (_ingredients.isEmpty)
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 20),
+            child: Text(
+              'No Ingredients',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
+            ),
+          )
+        else
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20),
+            child: Table(
+              border: TableBorder.all(color: Colors.grey),
+              columnWidths: const {
+                0: FlexColumnWidth(2),
+                1: FlexColumnWidth(0.8),
+                2: FlexColumnWidth(0.6),
+              },
+              children: _ingredients.map((ingredient) {
+                return TableRow(
+                  children: [
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.middle,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 6),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                ingredient.food.name,
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.bold),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            IconButton(
+                              icon: const Icon(Icons.visibility, size: 24),
+                              padding: EdgeInsets.zero,
+                              constraints: const BoxConstraints(),
+                              onPressed: () =>
+                                  _navigateToFoodDetail(ingredient.food),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.middle,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 2),
+                        child: Text(
+                          '${ingredient.quantity * 100}g',
+                          style: const TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.w500),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    ),
+                    TableCell(
+                      verticalAlignment: TableCellVerticalAlignment.middle,
+                      child: Center(
+                        child: IconButton(
+                          icon: const Icon(Icons.delete,
+                              color: Colors.red, size: 22),
+                          padding: EdgeInsets.zero,
+                          constraints: const BoxConstraints(),
+                          onPressed: () =>
+                              setState(() => _ingredients.remove(ingredient)),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }).toList(),
+            ),
+          ),
       ],
     );
   }
@@ -402,6 +359,75 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
           ),
         ]
       ],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final foodsManager = Provider.of<FoodsManager>(context);
+    final recipesManager = Provider.of<RecipesManager>(context);
+    final availableFoods = foodsManager.items;
+    final nutrition = recipesManager.calculateTotalNutrition(
+      Recipe(
+        id: '',
+        name: '',
+        description: '',
+        ingredients: _ingredients,
+        imageUrl: '',
+        userId: '',
+      ),
+    );
+    return Scaffold(
+      appBar: AppBar(
+          title:
+              Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField('Recipe Name', _nameController, 'Enter name'),
+              _buildTextField(
+                  'Description', _descriptionController, 'Enter description',
+                  isMultiline: true),
+              const SizedBox(height: 20),
+              _buildImagePicker(),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text('Choose New Image from Gallery',
+                      style: TextStyle(fontSize: 16)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildFoodSelector(availableFoods),
+              const SizedBox(height: 40),
+              _buildCurrentIngredientsTable(),
+              const SizedBox(height: 20),
+              RecipeNutrientTable(
+                controllers: {
+                  'calories': TextEditingController(
+                      text: '${nutrition['calories']} kcal'),
+                  'protein':
+                      TextEditingController(text: '${nutrition['protein']}g'),
+                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
+                  'carbohydrates': TextEditingController(
+                      text: '${nutrition['carbohydrates']}g'),
+                  'fiber':
+                      TextEditingController(text: '${nutrition['fiber']}g'),
+                },
+                isEditable: false,
+              ),
+              const SizedBox(height: 10),
+              _buildActionButtons(),
+              const SizedBox(height: 20),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

@@ -18,10 +18,7 @@ Future<void> main() async {
         ChangeNotifierProvider(create: (ctx) => UserManager()),
         ChangeNotifierProvider(create: (ctx) => FoodsManager()),
         ChangeNotifierProvider(
-          create: (ctx) => RecipesManager(
-            Provider.of<FoodsManager>(ctx, listen: false),
-            Provider.of<UserManager>(ctx, listen: false),
-          ),
+          create: (ctx) => RecipesManager(),
         ),
       ],
       child: const MyApp(),
@@ -104,9 +101,14 @@ class MyApp extends StatelessWidget {
             final recipeId = settings.arguments as String;
             page = SafeArea(
               child: Consumer<RecipesManager>(
-                builder: (context, recipesManager, _) => RecipeDetailScreen(
-                  recipesManager.findById(recipeId),
-                ),
+                builder: (context, recipesManager, _) {
+                  final recipe = recipesManager.findById(recipeId);
+                  return recipe != null
+                      ? RecipeDetailScreen(recipe: recipe)
+                      : const Scaffold(
+                          body: Center(child: Text("Recipe not found.")),
+                        );
+                },
               ),
             );
             break;
