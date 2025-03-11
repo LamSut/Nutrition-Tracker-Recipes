@@ -107,14 +107,14 @@ class UserProfileScreen extends StatelessWidget {
           icon: Icons.edit,
           title: 'Change Information',
           onPressed: () {
-            // Navigator.pushNamed(context, UserUpdateInformationScreen.routeName);
+            Navigator.pushNamed(context, UserUpdateInformationScreen.routeName);
           },
         ),
         _buildSettingsButton(
           icon: Icons.lock,
           title: 'Change Password',
           onPressed: () {
-            // Navigator.pushNamed(context, UserUpdatePasswordScreen.routeName);
+            Navigator.pushNamed(context, UserUpdatePasswordScreen.routeName);
           },
         ),
       ],

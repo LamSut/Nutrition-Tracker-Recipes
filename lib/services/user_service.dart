@@ -26,7 +26,7 @@ class UserService {
   }
 
   String _getProfileImageUrl(PocketBase pb, RecordModel userModel) {
-    final imageName = userModel.getStringValue('imageUrl');
+    final imageName = userModel.getStringValue('profileImage');
     return imageName.isNotEmpty
         ? pb.files.getUrl(userModel, imageName).toString()
         : '';
@@ -141,7 +141,7 @@ class UserService {
             files: user.profileImage != null
                 ? [
                     http.MultipartFile.fromBytes(
-                      'imageUrl',
+                      'profileImage',
                       await user.profileImage!.readAsBytes(),
                       filename: user.profileImage!.uri.pathSegments.last,
                     ),
