@@ -99,7 +99,7 @@ class _UserUpdateInformationScreenState
                   radius: 26,
                   backgroundColor: Theme.of(context).colorScheme.secondary,
                   child: IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.black87),
+                    icon: const Icon(Icons.edit, color: Colors.white),
                     iconSize: 28,
                     onPressed: _pickImage,
                     padding: EdgeInsets.zero,
@@ -133,7 +133,7 @@ class _UserUpdateInformationScreenState
                     top: 10, bottom: 10, left: 40, right: 40),
                 backgroundColor: Theme.of(context).colorScheme.secondary,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(24)),
               ),
               child: const Text(
                 'Save Changes',

@@ -33,7 +33,20 @@ class RecipeDetailScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8),
-                child: Image.network(recipe.imageUrl, fit: BoxFit.contain),
+                child: recipe.imageUrl.isNotEmpty
+                    ? Image.network(
+                        recipe.imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset(
+                          'assets/recipes/default.jpg',
+                          fit: BoxFit.contain,
+                        ),
+                      )
+                    : Image.asset(
+                        'assets/recipes/default.jpg',
+                        fit: BoxFit.contain,
+                      ),
               ),
             ),
             Padding(
@@ -106,7 +119,7 @@ class RecipeDetailScreen extends StatelessWidget {
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: Colors.white,
                 padding:
-                    const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20),
                 ),

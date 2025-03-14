@@ -58,27 +58,33 @@ class _UserUpdatePasswordScreenState extends State<UserUpdatePasswordScreen> {
               const SizedBox(height: 10),
               _buildTextField('Retype New Password', _retypePasswordController),
               const SizedBox(height: 20),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: _submitForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: const Text(
-                    'Save Changes',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
+              Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 240),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(24),
+                        ),
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      child: const Text(
+                        'Save Changes',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 24,
+                        ),
+                      ),
                     ),
                   ),
                 ),
-              ),
+              )
             ],
           ),
         ),

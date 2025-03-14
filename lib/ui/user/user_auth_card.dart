@@ -74,7 +74,6 @@ class _AuthCardState extends State<AuthCard> {
       _authMode =
           _authMode == AuthMode.login ? AuthMode.signup : AuthMode.login;
 
-      // Xóa dữ liệu khi chuyển chế độ
       _usernameController.clear();
       _emailController.clear();
       _nameController.clear();
@@ -246,7 +245,7 @@ class _AuthCardState extends State<AuthCard> {
       onPressed: _submit,
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(30),
+          borderRadius: BorderRadius.circular(20),
         ),
         padding: const EdgeInsets.symmetric(horizontal: 30.0, vertical: 8.0),
         backgroundColor: Theme.of(context).colorScheme.secondary,

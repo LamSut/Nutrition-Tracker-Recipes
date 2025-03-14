@@ -1,3 +1,4 @@
+import 'package:NTR/ui/user/user_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
@@ -75,6 +76,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     if (_formKey.currentState!.validate()) {
       final recipesManager =
           Provider.of<RecipesManager>(context, listen: false);
+      final userId = Provider.of<UserManager>(context, listen: false).user?.id;
 
       final updatedRecipe = Recipe(
         id: widget.recipe?.id ?? DateTime.now().toString(),
@@ -83,7 +85,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
         ingredients: _ingredients,
         featuredImage: _image,
         imageUrl: widget.recipe?.imageUrl ?? '',
-        userId: widget.recipe?.userId ?? '',
+        userId: widget.recipe?.userId ?? userId!,
       );
 
       if (widget.recipe == null) {
@@ -336,30 +338,71 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
   }
 
   Widget _buildActionButtons() {
-    return Row(
-      children: [
-        Expanded(
+    if (widget.recipe == null) {
+      return Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 300),
           child: ElevatedButton(
             onPressed: _submitForm,
             style: ElevatedButton.styleFrom(
-                backgroundColor: Theme.of(context).colorScheme.secondary),
-            child: const Text('Update Recipe',
-                style: TextStyle(color: Colors.white, fontSize: 20)),
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20)),
+            ),
+            child: const Text(
+              'Add New Recipe',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         ),
-        if (widget.recipe != null) ...[
+      );
+    } else {
+      return Row(
+        children: [
+          Expanded(
+            child: ElevatedButton(
+              onPressed: _submitForm,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.secondary,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20)),
+              ),
+              child: const Text(
+                'Update Recipe',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ),
           const SizedBox(width: 10),
           Expanded(
             child: ElevatedButton(
               onPressed: _confirmDelete,
-              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-              child: const Text('Delete Recipe',
-                  style: TextStyle(color: Colors.white, fontSize: 20)),
+              style: ElevatedButton.styleFrom(
+                  backgroundColor: Color.fromARGB(255, 180, 10, 0),
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20))),
+              child: const Text(
+                'Delete Recipe',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
-        ]
-      ],
-    );
+        ],
+      );
+    }
   }
 
   @override
@@ -421,7 +464,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                 },
                 isEditable: false,
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               _buildActionButtons(),
               const SizedBox(height: 20),
             ],

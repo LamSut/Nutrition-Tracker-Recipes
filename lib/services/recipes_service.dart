@@ -39,23 +39,30 @@ class RecipesService {
       final pb = await getPocketbaseInstance();
       final userId = pb.authStore.record!.id;
 
-      final recipeModel = await pb.collection('recipes').create(
-        body: {
-          ...recipe.toJson(),
-          'userId': userId,
-        },
-        files: [
+      List<http.MultipartFile>? files;
+      if (recipe.featuredImage != null) {
+        files = [
           http.MultipartFile.fromBytes(
             'featuredImage',
             await recipe.featuredImage!.readAsBytes(),
             filename: recipe.featuredImage!.uri.pathSegments.last,
           ),
-        ],
+        ];
+      }
+
+      final recipeModel = await pb.collection('recipes').create(
+        body: {
+          ...recipe.toJson(),
+          'userId': userId,
+        },
+        files: files ?? [],
       );
 
       return recipe.copyWith(
         id: recipeModel.id,
-        imageUrl: _getFeaturedImageUrl(pb, recipeModel),
+        imageUrl: files != null
+            ? _getFeaturedImageUrl(pb, recipeModel)
+            : recipe.imageUrl,
       );
     } catch (error) {
       return null;

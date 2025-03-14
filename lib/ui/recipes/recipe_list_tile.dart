@@ -55,17 +55,31 @@ class RecipeListTile extends StatelessWidget {
         elevation: 4,
         margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 12.0),
         child: ListTile(
-          contentPadding: const EdgeInsets.all(12.0),
+          contentPadding:
+              const EdgeInsets.only(top: 6, right: 10, bottom: 6, left: 10),
           leading: ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.network(
-              recipe.imageUrl,
-              width: 70,
-              height: 70,
-              fit: BoxFit.contain,
-              errorBuilder: (context, error, stackTrace) =>
-                  const Icon(Icons.image, size: 70),
-            ),
+            child: recipe.imageUrl.isNotEmpty
+                ? Image.network(
+                    recipe.imageUrl,
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Image.asset(
+                        'assets/recipes/default.jpg',
+                        width: 60,
+                        height: 60,
+                        fit: BoxFit.contain,
+                      );
+                    },
+                  )
+                : Image.asset(
+                    'assets/recipes/default.jpg',
+                    width: 60,
+                    height: 60,
+                    fit: BoxFit.contain,
+                  ),
           ),
           title: Text(
             recipe.name,
@@ -90,7 +104,7 @@ class RecipeListTile extends StatelessWidget {
             ),
             padding: const EdgeInsets.all(0),
             child: IconButton(
-              icon: const Icon(Icons.edit, color: Colors.black87),
+              icon: const Icon(Icons.edit, color: Colors.white),
               iconSize: 24,
               onPressed: () {
                 Navigator.of(context).pushNamed(
