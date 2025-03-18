@@ -31,12 +31,10 @@ flutter:
   uses-material-design: true
 
   assets:
-    - assets/avatars/
+    - assets/default/
     - assets/fonts/
-    - assets/foods/
     - assets/food-types/
     - assets/logos/
-    - assets/recipes/
     - .env
 
   fonts:

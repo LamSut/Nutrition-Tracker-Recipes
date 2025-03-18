@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../models/recipe.dart';
+import '../shared/dialog_utils.dart';
 import 'recipes_manager.dart';
 import 'recipe_detail_screen.dart';
 import 'recipe_edit_screen.dart';
@@ -24,25 +25,9 @@ class RecipeListTile extends StatelessWidget {
         child: const Icon(Icons.delete, color: Colors.white, size: 30),
       ),
       confirmDismiss: (direction) {
-        return showDialog(
-          context: context,
-          builder: (ctx) => AlertDialog(
-            title: const Text('Are you sure?'),
-            content: const Text('Do you want to remove this recipe?',
-                style: TextStyle(fontSize: 20)),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(true),
-                child: const Text('Yes',
-                    style: TextStyle(color: Colors.teal, fontSize: 18)),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(ctx).pop(false),
-                child: const Text('No',
-                    style: TextStyle(color: Colors.red, fontSize: 18)),
-              ),
-            ],
-          ),
+        return showConfirmDialog(
+          context,
+          'Do you want to remove this Recipe?',
         );
       },
       onDismissed: (direction) async {
@@ -67,7 +52,7 @@ class RecipeListTile extends StatelessWidget {
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
                       return Image.asset(
-                        'assets/recipes/default.jpg',
+                        'assets/default/recipe.png',
                         width: 60,
                         height: 60,
                         fit: BoxFit.contain,
@@ -75,7 +60,7 @@ class RecipeListTile extends StatelessWidget {
                     },
                   )
                 : Image.asset(
-                    'assets/recipes/default.jpg',
+                    'assets/default/recipe.png',
                     width: 60,
                     height: 60,
                     fit: BoxFit.contain,
@@ -97,22 +82,16 @@ class RecipeListTile extends StatelessWidget {
               arguments: recipe.id,
             );
           },
-          trailing: Container(
-            decoration: BoxDecoration(
-              color: Theme.of(context).colorScheme.secondary,
-              shape: BoxShape.circle,
-            ),
-            padding: const EdgeInsets.all(0),
-            child: IconButton(
-              icon: const Icon(Icons.edit, color: Colors.white),
-              iconSize: 24,
-              onPressed: () {
-                Navigator.of(context).pushNamed(
-                  RecipeEditScreen.routeName,
-                  arguments: recipe.id,
-                );
-              },
-            ),
+          trailing: IconButton(
+            icon: Icon(Icons.edit,
+                color: Theme.of(context).colorScheme.secondary),
+            iconSize: 32,
+            onPressed: () {
+              Navigator.of(context).pushNamed(
+                RecipeEditScreen.routeName,
+                arguments: recipe.id,
+              );
+            },
           ),
         ),
       ),

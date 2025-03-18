@@ -35,38 +35,34 @@ class FoodsService {
   Future<Food?> addFood(Food food) async {
     try {
       final pb = await getPocketbaseInstance();
-      print("✅ PocketBase instance initialized");
 
-      if (food.featuredImage == null) {
-        print("❌ Error: featuredImage is null");
-        return null;
-      }
+      List<http.MultipartFile> files = [];
 
-      final imageBytes = await food.featuredImage!.readAsBytes();
-      final fileName = food.featuredImage!.uri.pathSegments.last;
+      if (food.featuredImage != null) {
+        final imageBytes = await food.featuredImage!.readAsBytes();
+        final fileName = food.featuredImage!.uri.pathSegments.last;
 
-      print("📷 Uploading image: $fileName (${imageBytes.length} bytes)");
-
-      final foodModel = await pb.collection('foods').create(
-        body: food.toJson(),
-        files: [
+        files.add(
           http.MultipartFile.fromBytes(
             'featuredImage',
             imageBytes,
             filename: fileName,
           ),
-        ],
-      );
+        );
+      }
 
-      print("✅ Food added successfully: ${foodModel.id}");
+      final foodModel = await pb.collection('foods').create(
+            body: food.toJson(),
+            files: files,
+          );
 
       return food.copyWith(
         id: foodModel.id,
-        imageUrl: _getFeaturedImageUrl(pb, foodModel),
+        imageUrl: food.featuredImage != null
+            ? _getFeaturedImageUrl(pb, foodModel)
+            : null,
       );
-    } catch (error, stackTrace) {
-      print("❌ Error adding food: $error");
-      print(stackTrace);
+    } catch (error) {
       return null;
     }
   }

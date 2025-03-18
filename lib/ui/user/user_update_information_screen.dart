@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart';
+import '../shared/dialog_utils.dart';
 import '../user/user_manager.dart';
 
 class UserUpdateInformationScreen extends StatefulWidget {
@@ -58,16 +59,30 @@ class _UserUpdateInformationScreenState
     }
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
-      final updatedUser = _user.copyWith(
-        name: _nameController.text,
-        birthday: DateFormat('dd/MM/yyyy').parse(_birthdayController.text),
-        gender: _selectedGender == 'Male',
-        profileImage: _profileImage,
+      bool? confirm = await showConfirmDialog(
+        context,
+        'Do you really want to update your profile information?',
       );
-      Provider.of<UserManager>(context, listen: false).updateUser(updatedUser);
-      Navigator.of(context).pop();
+
+      if (confirm == true) {
+        try {
+          final updatedUser = _user.copyWith(
+            name: _nameController.text,
+            birthday: DateFormat('dd/MM/yyyy').parse(_birthdayController.text),
+            gender: _selectedGender == 'Male',
+            profileImage: _profileImage,
+          );
+
+          Provider.of<UserManager>(context, listen: false)
+              .updateUser(updatedUser);
+          Navigator.of(context).pop();
+        } catch (error) {
+          showErrorDialog(
+              context, 'Failed to update profile. Please try again.');
+        }
+      }
     }
   }
 

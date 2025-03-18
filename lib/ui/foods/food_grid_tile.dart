@@ -37,14 +37,16 @@ class FoodGridTile extends StatelessWidget {
               ? Image.network(
                   food.imageUrl,
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Center(child: Text('Image not found')),
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/default/food.png',
+                      fit: BoxFit.contain),
                 )
               : Image.asset(
                   food.imageUrl,
                   fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Center(child: Text('Image not found')),
+                  errorBuilder: (context, error, stackTrace) => Image.asset(
+                      'assets/default/food.png',
+                      fit: BoxFit.contain),
                 ),
         ),
       ),

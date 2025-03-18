@@ -59,7 +59,7 @@ class UserProfileScreen extends StatelessWidget {
     if (imageUrl != null && imageUrl.trim().isNotEmpty) {
       return NetworkImage(imageUrl);
     }
-    return const AssetImage('assets/avatars/default.png');
+    return const AssetImage('assets/default/avatar.png');
   }
 
   Widget _buildInfoField(String label, String value) {

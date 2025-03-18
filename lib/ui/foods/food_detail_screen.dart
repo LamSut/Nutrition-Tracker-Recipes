@@ -37,14 +37,20 @@ class FoodDetailScreen extends StatelessWidget {
                         food.imageUrl,
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) =>
-                            const Center(child: Text('Image not found')),
+                            Image.asset('assets/default/food.png',
+                                fit: BoxFit.contain),
                       )
-                    : Image.asset(
-                        food.imageUrl,
-                        fit: BoxFit.contain,
-                        errorBuilder: (context, error, stackTrace) =>
-                            const Center(child: Text('Image not found')),
-                      ),
+                    : (food.imageUrl == 'assets/default/food.png' ||
+                            food.imageUrl.isEmpty)
+                        ? Image.asset('assets/default/food.png',
+                            fit: BoxFit.contain)
+                        : Image.asset(
+                            food.imageUrl,
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) =>
+                                Image.asset('assets/default/food.png',
+                                    fit: BoxFit.contain),
+                          ),
               ),
             ),
             const SizedBox(height: 4),

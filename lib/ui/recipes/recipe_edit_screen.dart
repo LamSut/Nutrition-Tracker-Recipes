@@ -9,6 +9,7 @@ import '../../models/food.dart';
 import '../recipes/recipes_manager.dart';
 import '../foods/foods_manager.dart';
 import '../foods/food_detail_screen.dart';
+import '../shared/dialog_utils.dart';
 import 'recipe_nutrient_table.dart';
 
 class RecipeEditScreen extends StatefulWidget {
@@ -72,8 +73,16 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     }
   }
 
-  void _submitForm() {
+  void _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      final confirm = await showConfirmDialog(
+        context,
+        widget.recipe == null
+            ? 'Do you want to add this recipe?'
+            : 'Do you want to update this recipe?',
+      );
+      if (confirm != true) return;
+
       final recipesManager =
           Provider.of<RecipesManager>(context, listen: false);
       final userId = Provider.of<UserManager>(context, listen: false).user?.id;
@@ -97,33 +106,86 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     }
   }
 
-  void _confirmDelete() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Confirm Deletion'),
-        content: const Text(
-          'Are you sure you want to delete this recipe?',
-          style: TextStyle(fontSize: 20),
+  void _confirmDelete() async {
+    final confirm = await showConfirmDialog(
+      context,
+      'Are you sure you want to delete this recipe?',
+    );
+    if (confirm == true) {
+      Provider.of<RecipesManager>(context, listen: false)
+          .deleteRecipe(widget.recipe!.id!);
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/recipes-overview',
+        (route) => false,
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final foodsManager = Provider.of<FoodsManager>(context);
+    final recipesManager = Provider.of<RecipesManager>(context);
+    final availableFoods = foodsManager.items;
+    final nutrition = recipesManager.calculateTotalNutrition(
+      Recipe(
+        id: '',
+        name: '',
+        description: '',
+        ingredients: _ingredients,
+        imageUrl: '',
+        userId: '',
+      ),
+    );
+    return Scaffold(
+      appBar: AppBar(
+          title:
+              Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTextField('Recipe Name', _nameController, 'Enter name'),
+              _buildTextField(
+                  'Description', _descriptionController, 'Enter description',
+                  isMultiline: true),
+              const SizedBox(height: 20),
+              _buildImagePicker(),
+              const SizedBox(height: 10),
+              Center(
+                child: ElevatedButton(
+                  onPressed: _pickImage,
+                  child: const Text('Choose New Image from Gallery',
+                      style: TextStyle(fontSize: 16)),
+                ),
+              ),
+              const SizedBox(height: 20),
+              _buildFoodSelector(availableFoods),
+              const SizedBox(height: 40),
+              _buildCurrentIngredientsTable(),
+              const SizedBox(height: 20),
+              RecipeNutrientTable(
+                controllers: {
+                  'calories': TextEditingController(
+                      text: '${nutrition['calories']} kcal'),
+                  'protein':
+                      TextEditingController(text: '${nutrition['protein']}g'),
+                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
+                  'carbohydrates': TextEditingController(
+                      text: '${nutrition['carbohydrates']}g'),
+                  'fiber':
+                      TextEditingController(text: '${nutrition['fiber']}g'),
+                },
+                isEditable: false,
+              ),
+              const SizedBox(height: 20),
+              _buildActionButtons(),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Provider.of<RecipesManager>(context, listen: false)
-                  .deleteRecipe(widget.recipe!.id!);
-              Navigator.of(context).popUntil(
-                  (route) => route.settings.name == '/recipes-overview');
-            },
-            child: const Text(
-              'Delete',
-              style: TextStyle(color: Colors.red, fontSize: 22),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel', style: TextStyle(fontSize: 22)),
-          ),
-        ],
       ),
     );
   }
@@ -168,7 +230,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                         return const Center(child: Text('Image not found'));
                       },
                     )
-                  : Image.asset('assets/recipes/default.jpg',
+                  : Image.asset('assets/default/recipe.png',
                       fit: BoxFit.contain),
         ),
       ],
@@ -248,7 +310,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
     return Column(
       children: [
         SizedBox(
-          width: double.infinity, // Đảm bảo tiêu đề căn giữa toàn màn hình
+          width: double.infinity,
           child: const Text(
             'Current Ingredients',
             style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
@@ -403,74 +465,5 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
         ],
       );
     }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final foodsManager = Provider.of<FoodsManager>(context);
-    final recipesManager = Provider.of<RecipesManager>(context);
-    final availableFoods = foodsManager.items;
-    final nutrition = recipesManager.calculateTotalNutrition(
-      Recipe(
-        id: '',
-        name: '',
-        description: '',
-        ingredients: _ingredients,
-        imageUrl: '',
-        userId: '',
-      ),
-    );
-    return Scaffold(
-      appBar: AppBar(
-          title:
-              Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField('Recipe Name', _nameController, 'Enter name'),
-              _buildTextField(
-                  'Description', _descriptionController, 'Enter description',
-                  isMultiline: true),
-              const SizedBox(height: 20),
-              _buildImagePicker(),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text('Choose New Image from Gallery',
-                      style: TextStyle(fontSize: 16)),
-                ),
-              ),
-              const SizedBox(height: 20),
-              _buildFoodSelector(availableFoods),
-              const SizedBox(height: 40),
-              _buildCurrentIngredientsTable(),
-              const SizedBox(height: 20),
-              RecipeNutrientTable(
-                controllers: {
-                  'calories': TextEditingController(
-                      text: '${nutrition['calories']} kcal'),
-                  'protein':
-                      TextEditingController(text: '${nutrition['protein']}g'),
-                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
-                  'carbohydrates': TextEditingController(
-                      text: '${nutrition['carbohydrates']}g'),
-                  'fiber':
-                      TextEditingController(text: '${nutrition['fiber']}g'),
-                },
-                isEditable: false,
-              ),
-              const SizedBox(height: 20),
-              _buildActionButtons(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
-      ),
-    );
   }
 }

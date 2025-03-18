@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../models/food.dart';
+import '../shared/dialog_utils.dart';
 import 'foods_manager.dart';
 import 'dart:io';
 
@@ -50,6 +51,12 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
+      final confirmed = await showConfirmDialog(
+        context,
+        'Do you want to submit this Food?',
+      );
+      if (confirmed != true) return;
+
       final foodsManager = Provider.of<FoodsManager>(context, listen: false);
 
       if (widget.food == null) {
@@ -63,7 +70,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           fiber: double.tryParse(_fiberController.text) ?? 0,
           type: _selectedCategory!,
           featuredImage: _image,
-          imageUrl: _image?.path ?? 'assets/foods/default.jpg',
+          imageUrl: _image?.path ?? 'assets/default/food.png',
         );
         await foodsManager.addFood(newFood);
       } else {
@@ -84,42 +91,16 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     }
   }
 
-  void _confirmDelete() {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(
-          'Confirm Deletion',
-          style: TextStyle(
-              color: Color.fromARGB(255, 180, 10, 0),
-              fontWeight: FontWeight.bold),
-        ),
-        content: const Text(
-          'Are you sure you want to delete this Food Item?',
-          style: TextStyle(fontSize: 18),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              final foodsManager =
-                  Provider.of<FoodsManager>(context, listen: false);
-              await foodsManager.deleteFood(widget.food!.id!);
-              Navigator.of(ctx).pop();
-              Navigator.of(context).pop();
-            },
-            style: TextButton.styleFrom(
-                foregroundColor: const Color.fromARGB(255, 180, 10, 0)),
-            child: const Text('Delete', style: TextStyle(fontSize: 18)),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-            },
-            child: const Text('Cancel', style: TextStyle(fontSize: 18)),
-          ),
-        ],
-      ),
+  void _confirmDelete() async {
+    final confirmation = await showConfirmDialog(
+      context,
+      'Do you want to delete this Food?',
     );
+    if (confirmation == true) {
+      final foodsManager = Provider.of<FoodsManager>(context, listen: false);
+      await foodsManager.deleteFood(widget.food!.id!);
+      Navigator.of(context).pop();
+    }
   }
 
   @override
@@ -158,29 +139,47 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                 Center(
                   child: ElevatedButton(
                     onPressed: _pickImage,
-                    child: const Text('Choose New Image from Gallery',
-                        style: TextStyle(fontSize: 16)),
+                    child: const Text('Choose New Image',
+                        style: TextStyle(fontSize: 18)),
                   ),
                 ),
                 const SizedBox(height: 10),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: _submitForm,
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                Theme.of(context).colorScheme.secondary),
-                        child: Text(
-                          isEditing ? 'Update Food' : 'Add Food',
-                          style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
+                    if (!isEditing)
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.6,
+                        child: ElevatedButton(
+                          onPressed: _submitForm,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary),
+                          child: const Text(
+                            'Add New Food',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
                         ),
                       ),
-                    ),
                     if (isEditing) ...[
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: _submitForm,
+                          style: ElevatedButton.styleFrom(
+                              backgroundColor:
+                                  Theme.of(context).colorScheme.secondary),
+                          child: const Text(
+                            'Update Food',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
+                        ),
+                      ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: ElevatedButton(
@@ -188,17 +187,19 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
                           style: ElevatedButton.styleFrom(
                               backgroundColor:
                                   const Color.fromARGB(255, 180, 10, 0)),
-                          child: const Text('Delete Food',
-                              style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.white)),
+                          child: const Text(
+                            'Delete Food',
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white),
+                          ),
                         ),
                       ),
                     ]
                   ],
                 ),
-                const SizedBox(height: 40),
+                const SizedBox(height: 30),
               ],
             ),
           ),
@@ -213,7 +214,12 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     return TextFormField(
       controller: controller,
       keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
-      decoration: InputDecoration(labelText: label, hintText: placeholder),
+      decoration: InputDecoration(
+        labelText: label,
+        labelStyle: const TextStyle(fontSize: 18),
+        hintText: placeholder,
+        hintStyle: const TextStyle(fontSize: 18),
+      ),
       validator: (value) {
         if (value == null || value.trim().isEmpty) {
           return 'Please enter $label';
@@ -229,9 +235,15 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   Widget _buildDropdownField() {
     return DropdownButtonFormField<String>(
       value: _selectedCategory,
-      decoration: const InputDecoration(labelText: 'Category'),
+      decoration: const InputDecoration(
+        labelText: 'Category',
+        labelStyle: TextStyle(fontSize: 18),
+      ),
       items: ['Proteins', 'Grains', 'Vegetables', 'Fruits', 'Dairy']
-          .map((e) => DropdownMenuItem(value: e, child: Text(e)))
+          .map((e) => DropdownMenuItem(
+                value: e,
+                child: Text(e, style: const TextStyle(fontSize: 18)),
+              ))
           .toList(),
       onChanged: (val) => setState(() => _selectedCategory = val),
       validator: (value) => value == null ? 'Please select a category' : null,
@@ -240,9 +252,15 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
 
   Widget _buildImagePicker() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        const Text('Product Image'),
+        const Text(
+          'Food Image',
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 20,
+          ),
+        ),
         const SizedBox(height: 10),
         Container(
           width: double.infinity,
@@ -250,13 +268,14 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
           color: Colors.grey[200],
           child: _image != null
               ? Image.file(_image!, fit: BoxFit.contain)
-              : widget.food != null
-                  ? Image.network(widget.food!.imageUrl,
-                      fit: BoxFit.contain,
-                      errorBuilder: (_, __, ___) =>
-                          const Center(child: Text('Image not found')))
-                  : Image.asset('assets/foods/default.jpg',
-                      fit: BoxFit.contain),
+              : (widget.food != null && widget.food!.imageUrl.isNotEmpty)
+                  ? (widget.food!.imageUrl.startsWith('http')
+                      ? Image.network(widget.food!.imageUrl,
+                          fit: BoxFit.contain,
+                          errorBuilder: (_, __, ___) =>
+                              const Center(child: Text('Image not found')))
+                      : Image.asset(widget.food!.imageUrl, fit: BoxFit.contain))
+                  : Image.asset('assets/default/food.png', fit: BoxFit.contain),
         ),
       ],
     );

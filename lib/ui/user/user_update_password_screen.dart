@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../shared/dialog_utils.dart';
 import 'user_manager.dart';
 
 class UserUpdatePasswordScreen extends StatefulWidget {
@@ -20,11 +21,15 @@ class _UserUpdatePasswordScreenState extends State<UserUpdatePasswordScreen> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       if (_newPasswordController.text != _retypePasswordController.text) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Passwords do not match')),
-        );
+        await showErrorDialog(context, 'Passwords do not match');
         return;
       }
+
+      bool? confirm = await showConfirmDialog(
+        context,
+        'Do you really want to update your password?',
+      );
+      if (confirm != true) return;
 
       final usersManager = Provider.of<UserManager>(context, listen: false);
       final updatedUser = await usersManager.updatePassword(
@@ -35,9 +40,7 @@ class _UserUpdatePasswordScreenState extends State<UserUpdatePasswordScreen> {
       if (updatedUser != null) {
         Navigator.of(context).pop();
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Password update failed')),
-        );
+        await showErrorDialog(context, 'Password update failed');
       }
     }
   }
@@ -115,6 +118,10 @@ class _UserUpdatePasswordScreenState extends State<UserUpdatePasswordScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide.none,
+            ),
+            errorStyle: const TextStyle(
+              fontSize: 14,
+              color: Color.fromARGB(255, 170, 11, 0),
             ),
           ),
           obscureText: true,

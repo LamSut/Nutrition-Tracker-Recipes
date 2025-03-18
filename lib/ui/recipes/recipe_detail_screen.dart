@@ -39,12 +39,12 @@ class RecipeDetailScreen extends StatelessWidget {
                         fit: BoxFit.contain,
                         errorBuilder: (context, error, stackTrace) =>
                             Image.asset(
-                          'assets/recipes/default.jpg',
+                          'assets/default/recipe.png',
                           fit: BoxFit.contain,
                         ),
                       )
                     : Image.asset(
-                        'assets/recipes/default.jpg',
+                        'assets/default/recipe.png',
                         fit: BoxFit.contain,
                       ),
               ),
@@ -100,6 +100,7 @@ class RecipeDetailScreen extends StatelessWidget {
               'Nutrition Facts',
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
+            const SizedBox(height: 10),
             RecipeNutrientTable(
               controllers: {
                 'calories':
@@ -113,7 +114,7 @@ class RecipeDetailScreen extends StatelessWidget {
               },
               isEditable: false,
             ),
-            const SizedBox(height: 20),
+            const SizedBox(height: 24),
             ElevatedButton(
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondary,

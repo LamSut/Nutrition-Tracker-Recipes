@@ -46,3 +46,6 @@ app.*.map.json
 
 # NDK
 android/app/.cxx/
+
+# Environment configuration
+.env
