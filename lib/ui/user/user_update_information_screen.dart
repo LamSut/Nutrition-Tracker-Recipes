@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../../models/user.dart';
@@ -31,8 +30,28 @@ class _UserUpdateInformationScreenState
     final userManager = Provider.of<UserManager>(context, listen: false);
     _user = userManager.user!;
     _nameController.text = _user.name;
-    _birthdayController.text = DateFormat('dd/MM/yyyy').format(_user.birthday);
+    _birthdayController.text = formatDate(_user.birthday);
     _selectedGender = _user.gender ? 'Male' : 'Female';
+  }
+
+  String formatDate(DateTime date) {
+    final day = date.day.toString().padLeft(2, '0');
+    final month = date.month.toString().padLeft(2, '0');
+    final year = date.year.toString();
+    return '$day/$month/$year';
+  }
+
+  DateTime? parseDate(String dateString) {
+    try {
+      final parts = dateString.split('/');
+      if (parts.length != 3) return null;
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      return DateTime(year, month, day);
+    } catch (e) {
+      return null;
+    }
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -44,7 +63,7 @@ class _UserUpdateInformationScreenState
     );
     if (pickedDate != null) {
       setState(() {
-        _birthdayController.text = DateFormat('dd/MM/yyyy').format(pickedDate);
+        _birthdayController.text = formatDate(pickedDate);
       });
     }
   }
@@ -68,9 +87,14 @@ class _UserUpdateInformationScreenState
 
       if (confirm == true) {
         try {
+          final parsedBirthday = parseDate(_birthdayController.text);
+          if (parsedBirthday == null) {
+            showErrorDialog(context, 'Invalid birthday format.');
+            return;
+          }
           final updatedUser = _user.copyWith(
             name: _nameController.text,
-            birthday: DateFormat('dd/MM/yyyy').parse(_birthdayController.text),
+            birthday: parsedBirthday,
             gender: _selectedGender == 'Male',
             profileImage: _profileImage,
           );
