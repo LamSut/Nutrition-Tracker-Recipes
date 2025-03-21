@@ -82,11 +82,17 @@ class _FoodsOverviewScreenState extends State<FoodsOverviewScreen> {
         drawer: isAdmin ? null : const AppDrawer(),
         body: _isLoading
             ? const Center(child: CircularProgressIndicator())
-            : Column(
-                children: const [
-                  FoodTypeFilterMenu(),
-                  Expanded(child: FoodsGrid()),
-                ],
+            : LayoutBuilder(
+                builder: (context, constraints) {
+                  bool isPortrait =
+                      constraints.maxWidth < constraints.maxHeight;
+                  return Column(
+                    children: [
+                      if (isPortrait) const FoodTypeFilterMenu(),
+                      const Expanded(child: FoodsGrid()),
+                    ],
+                  );
+                },
               ),
       ),
     );

@@ -27,7 +27,7 @@ class RecipeListTile extends StatelessWidget {
       confirmDismiss: (direction) {
         return showConfirmDialog(
           context,
-          'Do you want to remove this Recipe?',
+          'Would you remove this Recipe?',
         );
       },
       onDismissed: (direction) async {

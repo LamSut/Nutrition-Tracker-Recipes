@@ -162,10 +162,13 @@ class UserService {
     try {
       final pb = await getPocketbaseInstance();
       final currentUser = pb.authStore.record;
+
       if (currentUser == null) {
         throw Exception('No user logged in');
       }
-      final updatedRecord = await pb.collection('users').update(
+
+      // Cập nhật mật khẩu
+      await pb.collection('users').update(
         currentUser.id,
         body: {
           'oldPassword': oldPassword,
@@ -173,10 +176,12 @@ class UserService {
           'passwordConfirm': newPassword,
         },
       );
-      return User.fromJson(
-        updatedRecord.toJson()
-          ..addAll({'imageUrl': _getProfileImageUrl(pb, updatedRecord)}),
-      );
+
+      pb.authStore.clear();
+      await login(currentUser.getStringValue('username'), newPassword);
+
+      final updatedUser = await getUser(currentUser.id);
+      return updatedUser;
     } catch (error) {
       if (error is ClientException) {
         throw Exception(error.response['message']);

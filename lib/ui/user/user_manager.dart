@@ -27,7 +27,7 @@ class UserManager extends ChangeNotifier {
     required bool gender,
     required String password,
   }) async {
-    final user = await _userService.signup(
+    await _userService.signup(
       username: username,
       email: email,
       name: name,
@@ -35,8 +35,9 @@ class UserManager extends ChangeNotifier {
       gender: gender,
       password: password,
     );
-    _loggedInUser = user;
-    notifyListeners();
+
+    // auto login after signup for setup session
+    final user = await login(username, password);
     return user;
   }
 

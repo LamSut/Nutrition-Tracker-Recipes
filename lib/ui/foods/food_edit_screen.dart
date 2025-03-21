@@ -53,7 +53,7 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
     if (_formKey.currentState!.validate()) {
       final confirmed = await showConfirmDialog(
         context,
-        'Do you want to submit this Food?',
+        'Would you submit this Food?',
       );
       if (confirmed != true) return;
 
@@ -94,12 +94,19 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   void _confirmDelete() async {
     final confirmation = await showConfirmDialog(
       context,
-      'Do you want to delete this Food?',
+      'Would you delete this Food?',
     );
     if (confirmation == true) {
       final foodsManager = Provider.of<FoodsManager>(context, listen: false);
+
       await foodsManager.deleteFood(widget.food!.id!);
-      Navigator.of(context).pop();
+      await foodsManager.fetchFoods();
+
+      if (!mounted) return;
+      Navigator.of(context).pushNamedAndRemoveUntil(
+        '/foods_overview',
+        (route) => false,
+      );
     }
   }
 

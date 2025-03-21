@@ -78,8 +78,8 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       final confirm = await showConfirmDialog(
         context,
         widget.recipe == null
-            ? 'Do you want to add this recipe?'
-            : 'Do you want to update this recipe?',
+            ? 'Would you add this recipe?'
+            : 'Would you update this recipe?',
       );
       if (confirm != true) return;
 
@@ -251,7 +251,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               _currentFood = null;
             });
           },
-          items: ['All', 'Fruits', 'Vegetables', 'Proteins', 'Dairy']
+          items: ['All', 'Proteins', 'Grains', 'Vegetables', 'Fruits', 'Dairy']
               .map((type) => DropdownMenuItem(value: type, child: Text(type)))
               .toList(),
         ),
