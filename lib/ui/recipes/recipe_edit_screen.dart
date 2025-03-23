@@ -125,7 +125,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
   Widget build(BuildContext context) {
     final foodsManager = Provider.of<FoodsManager>(context);
     final recipesManager = Provider.of<RecipesManager>(context);
-    final availableFoods = foodsManager.items;
+    final availableFoods = foodsManager.allFoods;
     final nutrition = recipesManager.calculateTotalNutrition(
       Recipe(
         id: '',
@@ -163,7 +163,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               ),
               const SizedBox(height: 20),
               _buildFoodSelector(availableFoods),
-              const SizedBox(height: 40),
+              const SizedBox(height: 30),
               _buildCurrentIngredientsTable(),
               const SizedBox(height: 20),
               RecipeNutrientTable(
@@ -238,27 +238,49 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
   }
 
   Widget _buildFoodSelector(List<Food> availableFoods) {
-    return Column(
+    return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Selected Ingredients',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-        DropdownButton<String>(
-          value: _currentFoodType,
-          onChanged: (value) {
-            setState(() {
-              _currentFoodType = value!;
-              _currentFood = null;
-            });
-          },
-          items: ['All', 'Proteins', 'Grains', 'Vegetables', 'Fruits', 'Dairy']
-              .map((type) => DropdownMenuItem(value: type, child: Text(type)))
-              .toList(),
-        ),
-        Row(
-          children: [
-            Expanded(
-              child: DropdownButton<Food>(
+        SizedBox(
+          width: 180,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Selected Ingredients',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String>(
+                value: _currentFoodType,
+                onChanged: (value) {
+                  setState(() {
+                    _currentFoodType = value!;
+                    _currentFood = null;
+                  });
+                },
+                items: [
+                  'All',
+                  'Proteins',
+                  'Grains',
+                  'Vegetables',
+                  'Fruits',
+                  'Dairy'
+                ]
+                    .map((type) => DropdownMenuItem(
+                          value: type,
+                          child:
+                              Text(type, style: const TextStyle(fontSize: 18)),
+                        ))
+                    .toList(),
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 10),
+              DropdownButtonFormField<Food>(
+                isExpanded: true,
                 value: availableFoods.any((food) =>
                         _currentFoodType == 'All' ||
                         food.type == _currentFoodType)
@@ -274,34 +296,56 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(food.name),
+                              Text(food.name,
+                                  style: const TextStyle(fontSize: 18)),
                               IconButton(
                                 icon: const Icon(Icons.visibility),
+                                padding: const EdgeInsets.only(left: 10),
                                 onPressed: () => _navigateToFoodDetail(food),
                               ),
                             ],
                           ),
                         ))
                     .toList(),
+                decoration: const InputDecoration(
+                  contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                  border: OutlineInputBorder(),
+                ),
+                menuMaxHeight: 300,
               ),
-            ),
-            const SizedBox(width: 20),
-            SizedBox(
-              width: 120,
-              child: TextFormField(
-                keyboardType: TextInputType.number,
-                decoration:
-                    const InputDecoration(labelText: 'Quantity (x100g)'),
-                style: const TextStyle(fontSize: 18),
-                onChanged: (value) => _quantity = double.tryParse(value) ?? 1.0,
-              ),
-            ),
-            IconButton(
-              icon: const Icon(Icons.add_circle, color: Colors.teal),
-              onPressed: _addIngredient,
-            ),
-          ],
+            ],
+          ),
         ),
+        const SizedBox(width: 30),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 20),
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 100,
+                  child: TextFormField(
+                    keyboardType: TextInputType.number,
+                    textAlign: TextAlign.right,
+                    decoration: const InputDecoration(
+                      labelText: 'Quantity (100g)',
+                      labelStyle:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    ),
+                    style: const TextStyle(fontSize: 20),
+                    onChanged: (value) =>
+                        _quantity = double.tryParse(value) ?? 1.0,
+                  ),
+                ),
+                IconButton(
+                  icon: const Icon(Icons.add_circle, color: Colors.teal),
+                  onPressed: _addIngredient,
+                  padding: const EdgeInsets.only(top: 12),
+                ),
+              ],
+            ),
+          ),
+        )
       ],
     );
   }

@@ -53,6 +53,8 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             onTap: () {
+              Provider.of<FoodsManager>(context, listen: false)
+                  .setFoodType('All');
               Navigator.of(context)
                 ..pop()
                 ..pushReplacementNamed('/');
