@@ -113,104 +113,120 @@ class _FoodEditScreenState extends State<FoodEditScreen> {
   @override
   Widget build(BuildContext context) {
     final isEditing = widget.food != null;
+
     return Scaffold(
       appBar: AppBar(
         title: Text(isEditing ? 'Edit Food' : 'Add New Food'),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildTextField('Name', _nameController, 'Enter name'),
-                _buildTextField(
-                    'Calories (kcal)', _caloriesController, 'Enter calories',
-                    isNumeric: true),
-                _buildTextField(
-                    'Protein (g)', _proteinController, 'Enter protein',
-                    isNumeric: true),
-                _buildTextField('Fat (g)', _fatController, 'Enter fat',
-                    isNumeric: true),
-                _buildTextField('Carbohydrates (g)', _carbohydratesController,
-                    'Enter carbohydrates',
-                    isNumeric: true),
-                _buildTextField('Fiber (g)', _fiberController, 'Enter fiber',
-                    isNumeric: true),
-                _buildDropdownField(),
-                const SizedBox(height: 20),
-                _buildImagePicker(),
-                const SizedBox(height: 10),
-                Center(
-                  child: ElevatedButton(
-                    onPressed: _pickImage,
-                    child: const Text('Choose New Image',
-                        style: TextStyle(fontSize: 18)),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isWide = constraints.maxWidth > 600;
+          final double contentWidth =
+              isWide ? constraints.maxWidth * 0.6 : constraints.maxWidth;
+
+          return SingleChildScrollView(
+            child: Align(
+              alignment: isWide ? Alignment.center : Alignment.topCenter,
+              child: Container(
+                width: contentWidth,
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField('Name', _nameController, 'Enter name'),
+                      _buildTextField('Calories (kcal)', _caloriesController,
+                          'Enter calories',
+                          isNumeric: true),
+                      _buildTextField(
+                          'Protein (g)', _proteinController, 'Enter protein',
+                          isNumeric: true),
+                      _buildTextField('Fat (g)', _fatController, 'Enter fat',
+                          isNumeric: true),
+                      _buildTextField('Carbohydrates (g)',
+                          _carbohydratesController, 'Enter carbohydrates',
+                          isNumeric: true),
+                      _buildTextField(
+                          'Fiber (g)', _fiberController, 'Enter fiber',
+                          isNumeric: true),
+                      _buildDropdownField(),
+                      const SizedBox(height: 20),
+                      _buildImagePicker(),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: _pickImage,
+                          child: const Text('Choose New Image',
+                              style: TextStyle(fontSize: 18)),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          if (!isEditing)
+                            SizedBox(
+                              width: MediaQuery.of(context).size.width * 0.6,
+                              child: ElevatedButton(
+                                onPressed: _submitForm,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
+                                child: const Text(
+                                  'Add New Food',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          if (isEditing) ...[
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _submitForm,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context)
+                                        .colorScheme
+                                        .secondary),
+                                child: const Text(
+                                  'Update Food',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: ElevatedButton(
+                                onPressed: _confirmDelete,
+                                style: ElevatedButton.styleFrom(
+                                    backgroundColor:
+                                        const Color.fromARGB(255, 180, 10, 0)),
+                                child: const Text(
+                                  'Delete Food',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                              ),
+                            ),
+                          ]
+                        ],
+                      ),
+                      const SizedBox(height: 30),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    if (!isEditing)
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.6,
-                        child: ElevatedButton(
-                          onPressed: _submitForm,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary),
-                          child: const Text(
-                            'Add New Food',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    if (isEditing) ...[
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _submitForm,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  Theme.of(context).colorScheme.secondary),
-                          child: const Text(
-                            'Update Food',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      Expanded(
-                        child: ElevatedButton(
-                          onPressed: _confirmDelete,
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 180, 10, 0)),
-                          child: const Text(
-                            'Delete Food',
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ]
-                  ],
-                ),
-                const SizedBox(height: 30),
-              ],
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

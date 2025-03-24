@@ -12,6 +12,7 @@ class UserProfileScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<UserManager>(context).user;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('User Profile'),
@@ -19,38 +20,51 @@ class UserProfileScreen extends StatelessWidget {
       drawer: const AppDrawer(),
       body: user == null
           ? const Center(child: Text('No user logged in'))
-          : SingleChildScrollView(
-              child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    CircleAvatar(
-                      radius: 100,
-                      backgroundImage: _buildProfileImage(user.imageUrl),
-                    ),
-                    const SizedBox(height: 20),
-                    const Text(
-                      'User Information',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
+          : LayoutBuilder(
+              builder: (context, constraints) {
+                final bool isWide = constraints.maxWidth > 600;
+                final double contentWidth =
+                    isWide ? constraints.maxWidth * 0.6 : constraints.maxWidth;
+
+                return SingleChildScrollView(
+                  child: Align(
+                    alignment: isWide ? Alignment.center : Alignment.topCenter,
+                    child: Container(
+                      width: contentWidth,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20, vertical: 10),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 20),
+                          CircleAvatar(
+                            radius: 100,
+                            backgroundImage: _buildProfileImage(user.imageUrl),
+                          ),
+                          const SizedBox(height: 20),
+                          const Text(
+                            'User Information',
+                            style: TextStyle(
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          _buildInfoField('Username', user.username),
+                          _buildInfoField('Full Name', user.name),
+                          _buildInfoField(
+                              'Gender', user.gender ? 'Male' : 'Female'),
+                          _buildInfoField(
+                            'Date of Birth',
+                            '${user.birthday.toLocal().day}/${user.birthday.toLocal().month}/${user.birthday.toLocal().year}',
+                          ),
+                          _buildInfoField('Email Address', user.email),
+                          _buildSettingsSection(context),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 10),
-                    _buildInfoField('Username', user.username),
-                    _buildInfoField('Full Name', user.name),
-                    _buildInfoField('Gender', user.gender ? 'Male' : 'Female'),
-                    _buildInfoField(
-                      'Date of Birth',
-                      '${user.birthday.toLocal().day}/${user.birthday.toLocal().month}/${user.birthday.toLocal().year}',
-                    ),
-                    _buildInfoField('Email Address', user.email),
-                    _buildSettingsSection(context),
-                  ],
-                ),
-              ),
+                  ),
+                );
+              },
             ),
     );
   }

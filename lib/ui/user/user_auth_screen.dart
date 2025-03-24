@@ -9,6 +9,9 @@ class UserAuthScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final deviceSize = MediaQuery.sizeOf(context);
+    final isLandscape =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+
     return Scaffold(
       body: Stack(
         children: <Widget>[
@@ -29,31 +32,37 @@ class UserAuthScreen extends StatelessWidget {
             child: SizedBox(
               height: deviceSize.height,
               width: deviceSize.width,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Image.asset(
-                    'assets/logos/app-icon.png',
-                    height: 120,
-                    width: 120,
-                    fit: BoxFit.cover,
+              child: Center(
+                child: FractionallySizedBox(
+                  widthFactor: isLandscape ? 0.6 : 1.0,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      if (!isLandscape)
+                        Image.asset(
+                          'assets/logos/app-icon.png',
+                          height: 120,
+                          width: 120,
+                          fit: BoxFit.cover,
+                        ),
+                      if (!isLandscape) const SizedBox(height: 4),
+                      Text(
+                        'Nutrition Tracker Recipes',
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      const SizedBox(height: 2),
+                      Flexible(
+                        flex: deviceSize.width > 600 ? 2 : 1,
+                        child: const AuthCard(),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Nutrition Tracker Recipes',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).primaryColor,
-                    ),
-                  ),
-                  const SizedBox(height: 2),
-                  Flexible(
-                    flex: deviceSize.width > 600 ? 2 : 1,
-                    child: const AuthCard(),
-                  ),
-                ],
+                ),
               ),
             ),
           ),

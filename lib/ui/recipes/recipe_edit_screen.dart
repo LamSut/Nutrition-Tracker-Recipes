@@ -136,56 +136,73 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
         userId: '',
       ),
     );
+
     return Scaffold(
       appBar: AppBar(
           title:
               Text(widget.recipe == null ? 'Add New Recipe' : 'Edit Recipe')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTextField('Recipe Name', _nameController, 'Enter name'),
-              _buildTextField(
-                  'Description', _descriptionController, 'Enter description',
-                  isMultiline: true),
-              const SizedBox(height: 20),
-              _buildImagePicker(),
-              const SizedBox(height: 10),
-              Center(
-                child: ElevatedButton(
-                  onPressed: _pickImage,
-                  child: const Text('Choose New Image from Gallery',
-                      style: TextStyle(fontSize: 16)),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isWide = constraints.maxWidth > 600;
+          final double contentWidth =
+              isWide ? constraints.maxWidth * 0.6 : constraints.maxWidth;
+
+          return SingleChildScrollView(
+            child: Align(
+              alignment: isWide ? Alignment.center : Alignment.topCenter,
+              child: Container(
+                width: contentWidth,
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField(
+                          'Recipe Name', _nameController, 'Enter name'),
+                      _buildTextField('Description', _descriptionController,
+                          'Enter description',
+                          isMultiline: true),
+                      const SizedBox(height: 20),
+                      _buildImagePicker(),
+                      const SizedBox(height: 10),
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: _pickImage,
+                          child: const Text('Choose New Image from Gallery',
+                              style: TextStyle(fontSize: 16)),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      _buildFoodSelector(availableFoods),
+                      const SizedBox(height: 30),
+                      _buildCurrentIngredientsTable(),
+                      const SizedBox(height: 20),
+                      RecipeNutrientTable(
+                        controllers: {
+                          'calories': TextEditingController(
+                              text: '${nutrition['calories']} kcal'),
+                          'protein': TextEditingController(
+                              text: '${nutrition['protein']}g'),
+                          'fat': TextEditingController(
+                              text: '${nutrition['fat']}g'),
+                          'carbohydrates': TextEditingController(
+                              text: '${nutrition['carbohydrates']}g'),
+                          'fiber': TextEditingController(
+                              text: '${nutrition['fiber']}g'),
+                        },
+                        isEditable: false,
+                      ),
+                      const SizedBox(height: 20),
+                      _buildActionButtons(),
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 20),
-              _buildFoodSelector(availableFoods),
-              const SizedBox(height: 30),
-              _buildCurrentIngredientsTable(),
-              const SizedBox(height: 20),
-              RecipeNutrientTable(
-                controllers: {
-                  'calories': TextEditingController(
-                      text: '${nutrition['calories']} kcal'),
-                  'protein':
-                      TextEditingController(text: '${nutrition['protein']}g'),
-                  'fat': TextEditingController(text: '${nutrition['fat']}g'),
-                  'carbohydrates': TextEditingController(
-                      text: '${nutrition['carbohydrates']}g'),
-                  'fiber':
-                      TextEditingController(text: '${nutrition['fiber']}g'),
-                },
-                isEditable: false,
-              ),
-              const SizedBox(height: 20),
-              _buildActionButtons(),
-              const SizedBox(height: 20),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -322,6 +339,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
             padding: const EdgeInsets.only(top: 20),
             child: Row(
               children: [
+                Spacer(),
                 SizedBox(
                   width: 100,
                   child: TextFormField(
@@ -345,7 +363,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
               ],
             ),
           ),
-        )
+        ),
       ],
     );
   }

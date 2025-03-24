@@ -114,76 +114,95 @@ class _UserUpdateInformationScreenState
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Edit Profile')),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Stack(
-              alignment: Alignment.bottomRight,
-              children: [
-                CircleAvatar(
-                  radius: 100,
-                  backgroundImage: _profileImage != null
-                      ? FileImage(_profileImage!)
-                      : (_user.imageUrl != null && _user.imageUrl!.isNotEmpty
-                          ? NetworkImage(_user.imageUrl!)
-                          : null) as ImageProvider<Object>?,
-                  child: (_profileImage == null &&
-                          (_user.imageUrl == null || _user.imageUrl!.isEmpty))
-                      ? const Icon(Icons.person, size: 100)
-                      : null,
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final bool isWide = constraints.maxWidth > 600;
+          final double contentWidth =
+              isWide ? constraints.maxWidth * 0.6 : constraints.maxWidth;
+
+          return SingleChildScrollView(
+            child: Align(
+              alignment: isWide ? Alignment.center : Alignment.topCenter,
+              child: Container(
+                width: contentWidth,
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
+                    Stack(
+                      alignment: Alignment.bottomRight,
+                      children: [
+                        CircleAvatar(
+                          radius: 100,
+                          backgroundImage: _profileImage != null
+                              ? FileImage(_profileImage!)
+                              : (_user.imageUrl != null &&
+                                      _user.imageUrl!.isNotEmpty
+                                  ? NetworkImage(_user.imageUrl!)
+                                  : null) as ImageProvider<Object>?,
+                          child: (_profileImage == null &&
+                                  (_user.imageUrl == null ||
+                                      _user.imageUrl!.isEmpty))
+                              ? const Icon(Icons.person, size: 100)
+                              : null,
+                        ),
+                        CircleAvatar(
+                          radius: 26,
+                          backgroundColor:
+                              Theme.of(context).colorScheme.secondary,
+                          child: IconButton(
+                            icon: const Icon(Icons.edit, color: Colors.white),
+                            iconSize: 28,
+                            onPressed: _pickImage,
+                            padding: EdgeInsets.zero,
+                            constraints: const BoxConstraints(),
+                          ),
+                        )
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    const Text(
+                      'Update Information',
+                      style:
+                          TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          _buildTextField('Name', _nameController),
+                          _buildDateField('Date of Birth', _birthdayController),
+                          _buildDropdownField(
+                              'Gender', _selectedGender, ['Male', 'Female']),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _submitForm,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.only(
+                            top: 10, bottom: 10, left: 40, right: 40),
+                        backgroundColor:
+                            Theme.of(context).colorScheme.secondary,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24)),
+                      ),
+                      child: const Text(
+                        'Save Changes',
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 24),
+                      ),
+                    ),
+                  ],
                 ),
-                CircleAvatar(
-                  radius: 26,
-                  backgroundColor: Theme.of(context).colorScheme.secondary,
-                  child: IconButton(
-                    icon: const Icon(Icons.edit, color: Colors.white),
-                    iconSize: 28,
-                    onPressed: _pickImage,
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-                )
-              ],
-            ),
-            const SizedBox(height: 20),
-            const Text(
-              'Update Information',
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 20),
-            Form(
-              key: _formKey,
-              child: Column(
-                children: [
-                  _buildTextField('Name', _nameController),
-                  _buildDateField('Date of Birth', _birthdayController),
-                  _buildDropdownField(
-                      'Gender', _selectedGender, ['Male', 'Female']),
-                ],
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _submitForm,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.only(
-                    top: 10, bottom: 10, left: 40, right: 40),
-                backgroundColor: Theme.of(context).colorScheme.secondary,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(24)),
-              ),
-              child: const Text(
-                'Save Changes',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24),
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

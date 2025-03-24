@@ -45,23 +45,34 @@ class FoodSearchDelegate extends SearchDelegate<String> {
         final food = filteredFoods[index];
         return ListTile(
           title: Text(food.name),
-          leading: food.imageUrl.startsWith('http')
-              ? Image.network(
-                  food.imageUrl,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.error),
-                )
-              : Image.asset(
-                  food.imageUrl,
-                  width: 70,
-                  height: 70,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const Icon(Icons.error),
-                ),
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: food.imageUrl.startsWith('http')
+                ? Image.network(
+                    food.imageUrl,
+                    width: 70,
+                    height: 70,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => Image.asset(
+                        'assets/default/food.png',
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.contain),
+                  )
+                : (food.imageUrl == 'assets/default/food.png' ||
+                        food.imageUrl.isEmpty)
+                    ? Image.asset('assets/default/food.png',
+                        width: 70, height: 70, fit: BoxFit.contain)
+                    : Image.asset(
+                        food.imageUrl,
+                        width: 70,
+                        height: 70,
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) =>
+                            Image.asset('assets/default/food.png',
+                                width: 70, height: 70, fit: BoxFit.contain),
+                      ),
+          ),
           onTap: () {
             Navigator.of(context).push(
               MaterialPageRoute(
