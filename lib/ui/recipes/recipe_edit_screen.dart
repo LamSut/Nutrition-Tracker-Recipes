@@ -259,7 +259,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 180,
+          width: 200,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -333,7 +333,7 @@ class _RecipeEditScreenState extends State<RecipeEditScreen> {
             ],
           ),
         ),
-        const SizedBox(width: 30),
+        const SizedBox(width: 10),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.only(top: 20),
